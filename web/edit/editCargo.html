@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>SearchMe - Editar Cargo</title>
+    <meta name="viewport"
+        content="width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=3.0, minimum-scale=1.0">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css">
+    <link rel="stylesheet" href="../css/style-index-lvl2.css">
+    <link rel="shortcut icon" href="../_img/_un-optimized/iconSearchMe.png">
+</head>
+
+<body>
+
+    <header class="panel-navegacion">
+        <img class="iconSearchMe" src="../_img/_un-optimized/iconSearchMe.png" alt="Icono SearchMe" title="SearchMe.">
+        <button class="botonNav" id="inicioBtn" onclick="location.href='../index.html'">Inicio</button>
+        <button class="botonNav" id="salirBtn" onclick="location.href='../index.html'">Salir</button>
+    </header>
+
+    <header class="panel-crear-elemento">
+        <h1>Editar cargo</h1>
+    </header>
+
+    <div class="contenedor-contenido">
+        <p>Bienvenido al panel de creación de un cargo. Aquí podrá establecer la información respectivamente, por favor ingrese los datos si es el caso y haga clic en actualizar o eliminar.</p>
+        <form class="formulario" action="/SearchMeWebApp/CargosController" method="post">
+            <input type="text" maxlength="20" placeholder="Nombre" name="nombre" autocomplete="off" required>
+            <input type="number" step="0.01" placeholder="Salario" name="salario" autocomplete="off" required>
+            <textarea maxlength="256" placeholder="Descripción" name="descripcion" autocomplete="off" required></textarea>
+            <input type="submit" value="Actualizar" name="btnOperacion">
+            <input type="submit" value="Eliminar" name="btnOperacion">
+        </form>
+    </div>
+
+</body>
+
+</html>

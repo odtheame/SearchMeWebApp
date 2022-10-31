@@ -1,0 +1,114 @@
+CREATE TABLE Bodegas (
+	idBodega int NOT NULL AUTO_INCREMENT,
+	nom_Bodega varchar(20) NOT NULL,
+	dir_Bodega varchar(30) NOT NULL,
+	tel_Bodega varchar(15) NOT NULL,
+	UNIQUE (tel_Bodega),
+	PRIMARY KEY (idBodega)
+);
+
+CREATE TABLE Departamentos (
+	idDept int NOT NULL AUTO_INCREMENT,
+	nom_Dept varchar(20) NOT NULL,
+	dir_Dept varchar(40) NOT NULL,
+	idBodega int NOT NULL,
+	PRIMARY KEY (idDept),
+	FOREIGN KEY(idBodega) REFERENCES Bodegas (idBodega)
+);
+
+CREATE TABLE Cargos (
+	idCargo int NOT NULL AUTO_INCREMENT,
+	nom_Cargo varchar(25) NOT NULL,
+	desc_Cargo TINYTEXT NOT NULL,
+	salario_Cargo DOUBLE NOT NULL,
+	UNIQUE (idCargo),
+	PRIMARY KEY (idCargo)
+);
+
+CREATE TABLE Empleados (
+	idEmpleado int NOT NULL AUTO_INCREMENT,
+	pr_Nom_Empl varchar(20) NOT NULL,
+	sd_Nom_Empl varchar(20),
+	pr_Apell_Empl varchar(20) NOT NULL,
+	sd_Apell_Empl varchar(20) NOT NULL,
+	dir_Empl varchar(40) NOT NULL,
+	tel_Empl varchar(15) NOT NULL,
+	correo_Empl varchar(40) NOT NULL,
+	fecha_Naci_Empl DATE NOT NULL,
+	ciud_Empl varchar(15) NOT NULL,
+	pais_Empl varchar(15) NOT NULL,
+	UNIQUE (correo_Empl),
+	UNIQUE (tel_Empl),
+	idCargo int NOT NULL,	
+	idDept int NOT NULL,
+	PRIMARY KEY (idEmpleado),
+	FOREIGN KEY(idCargo) REFERENCES Cargos (idCargo),
+	FOREIGN KEY(idDept) REFERENCES Departamentos (idDept)
+);
+
+
+CREATE TABLE Tiendas (
+	idTienda int NOT NULL AUTO_INCREMENT,
+	nom_Tienda varchar(20) NOT NULL,
+	dir_Tienda varchar(30) NOT NULL,
+	tel_Tienda varchar(15) NOT NULL,
+	idBodega int NOT NULL,
+	UNIQUE (tel_Tienda),
+	PRIMARY KEY (idTienda),
+	FOREIGN KEY(idBodega) REFERENCES Bodegas (idBodega)
+);
+
+CREATE TABLE Clientes (
+	idCliente int NOT NULL AUTO_INCREMENT,
+    	pr_Nom_Clien varchar(15) NOT NULL,
+    	sd_Nom_Clien varchar(15),
+    	pr_Apell_Clien varchar(15) NOT NULL,
+    	sd_Apell_Clien varchar(15) NOT NULL,
+    	correo_Clien varchar(40) NOT NULL,
+    	tel_Clien varchar(15) NOT NULL,
+    	dir_Clien varchar(40) NOT NULL,	
+	UNIQUE (correo_Clien),
+	UNIQUE (tel_Clien),
+    	PRIMARY KEY (idCliente)
+);
+
+CREATE TABLE Recibos (
+	idRecibo int NOT NULL AUTO_INCREMENT,
+	num_Recibo int NOT NULL,
+	fecha_Compra date NOT NULL,
+	valor_Total DOUBLE NOT NULL,
+	idTienda int NOT NULL,
+	idCliente int,
+	PRIMARY KEY (idRecibo),
+	FOREIGN KEY(idTienda) REFERENCES Tiendas (idTienda),
+	FOREIGN KEY(idCliente) REFERENCES Clientes (idCliente)
+); 
+
+
+INSERT INTO clientes VALUES (1, "Jeison", "Stiven", "Almanza", "Benavides", "jsalmanzab@itc.edu.co", "3138544087", "Kr 88c #54-29 sur");
+INSERT INTO clientes VALUES (2, "Johan", "Steven", "Gil", "Cardona", "jsgilc@itc.edu.co", "3137544067", "Kr 31c #78-29 sur");
+INSERT INTO clientes VALUES (3, "German", "Santiago", "Manrique", "Pacheco", "gsmanriquep@itc.edu.co", "3139876543", "Kr 76c #98-29 sur");
+
+INSERT INTO bodegas VALUES (1, "Corpas", "Kr 88a #31-24 sur", "778899459");
+INSERT INTO bodegas VALUES (2, "Cerpas", "Kr 87a #32-24 sur", "654123789");
+INSERT INTO bodegas VALUES (3, "Mokas SA", "Kr 35a #12-24 sur", "456123875");
+
+INSERT INTO tiendas VALUES (1, "Julians", "Kr 31a #54-24 sur", "423896142", 1);
+INSERT INTO tiendas VALUES (2, "Peluqueria", "Kr 41a #64-24 sur", "852963741", 2);
+INSERT INTO tiendas VALUES (3, "Donde Don Chucho", "Kr 51a #74-24 sur", "528417639", 3);
+
+INSERT INTO recibos VALUES (1, 12345, "2022-09-06", 500000, 1, 1);
+INSERT INTO recibos VALUES (2, 45678, "2022-09-06", 300000, 2, 2);
+INSERT INTO recibos VALUES (3, 78956, "2022-09-06", 800000, 3, 3);
+
+INSERT INTO departamentos VALUES (1, "Servicios", "Kr 67b #12-56 sur", 1);
+INSERT INTO departamentos VALUES (2, "Mantenimiento", "Kr 77b #22-56 sur", 2);
+INSERT INTO departamentos VALUES (3, "Atencion al cliente", "Kr 87b #32-56 sur", 3);
+
+INSERT INTO cargos VALUES (1, "Gerente servicios", "Organización y planificacion", 2200000);
+INSERT INTO cargos VALUES (2, "Gerente mantenimiento", "Organizacion y planificacion", 2400000);
+INSERT INTO cargos VALUES (3, "Gerente atencion", "Organizacion y planificacion", 1800000);
+
+INSERT INTO empleados VALUES (1, "Jeison", "Stiven", "Almanza", "Benavides", "3138544087", "Kr 88c #54-29 sur", "jeisonalmanza@corre.com", "2000-01-01", "Bogota", "Colombia", 1, 1);
+INSERT INTO empleados VALUES (2, "Jonnhy", "Melaslavo", "Asturias", "Niperragracia", "3218545087", "Kr 87b #13-29 sur", "correoxd@correo.com", "1800-01-01", "Chiquinquira", "Alemania", 2, 2);
+INSERT INTO empleados VALUES (3, "Cartensio", "Marcos", "Alzjaimer", "Norrecuerdo", "3211236578", "Kr 86a #15-29 sur", "cartensio@correo.com", "1988-01-01", "Oklahoma", "Rusia", 3, 3);

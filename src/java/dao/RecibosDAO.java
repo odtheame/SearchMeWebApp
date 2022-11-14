@@ -172,24 +172,12 @@ public class RecibosDAO {
         return recibo;
     }
 
-    public int buscarReciboNum(String reciboNum, List<Object> listadoInfo) {
-        String mostrar = "";
-        for (int i = 0; i < listadoInfo.size(); i++) {
-            mostrar = mostrar.concat(listadoInfo.get(i) + "\n");
-        }
-        String[] listadoRecibos = mostrar.split("\n");
-        for (String recibo : listadoRecibos) {
-            String[] reciboIdInfo = recibo.split(": ");
-            String[] idReciboSeccion = recibo.split("] ");
-            String[] idReciboString = idReciboSeccion[0].split("\\[");
-            int idRecibo = Integer.parseInt(idReciboString[1]);
-            String[] reciboComponentes = reciboIdInfo[1].split(" , ");
-            String idReciboBuscada = reciboComponentes[0];
-            if (idReciboBuscada.equals(reciboNum)) {
-                return idRecibo;
-            }
-        }
-        return 0;
+    public int buscarReciboNum(String reciboNum) {
+        Query q = getEntityManager().createNamedQuery("Recibos.findIdByNumRecibo");
+        q.setParameter("numRecibo", Integer.parseInt(reciboNum));
+        String [] quitandoCorchete1 = q.getResultList().toString().split("\\[");
+        String [] quitandoCorchete2 = quitandoCorchete1[1].split("\\]");
+        return (quitandoCorchete2.length==0)?0:Integer.parseInt(quitandoCorchete2[0]);
     }
 
     public String obtenerReciboNum(int idRecibo) {

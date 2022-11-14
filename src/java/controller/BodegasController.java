@@ -74,11 +74,17 @@ public class BodegasController extends HttpServlet {
             int idBodega = 0;
             nombre = request.getParameter("nombreBodega");
             telefono = request.getParameter("telefonoBodega");
-            if (!"".equals(nombre)) {
-                idBodega = dao.buscarBodegaNom(nombre, dao.findAll());
-            }
-            if (!"".equals(telefono)) {
-                idBodega = dao.buscarBodegaTel(telefono, dao.findAll());
+            boolean nombreBlank = nombre.isBlank();
+            boolean telefonoBlank = telefono.isBlank();
+            if (!nombreBlank && !telefonoBlank) {
+                idBodega = dao.buscarBodegaNomTel(nombre, telefono);
+            } else {
+                if (!nombreBlank) {
+                    idBodega = dao.buscarBodegaNom(nombre);
+                }
+                if (!telefonoBlank) {
+                    idBodega = dao.buscarBodegaTel(telefono);
+                }
             }
             if (idBodega == 0) {
                 ou.print("<script>alert(\"Bodega no encontrada\");"
@@ -88,7 +94,7 @@ public class BodegasController extends HttpServlet {
             }
         }
         if (update) {
-            bodega.setIdBodega(dao.buscarBodegaNom(nombre, dao.findAll()));
+            bodega.setIdBodega(dao.buscarBodegaNom(nombre));
             initComponents(request);
             setInfo();
             dao.update(bodega);
@@ -96,7 +102,7 @@ public class BodegasController extends HttpServlet {
                     + "location.href=\"index.html\"</script>");
         }
         if (delete) {
-            dao.remove(dao.buscarBodegaNom(nombre, dao.findAll()));
+            dao.remove(dao.buscarBodegaNom(nombre));
             ou.print("<script>"
                     + "alert('Bodega eliminada con éxito');"
                     + "location.href=\"index.html\"</script>");

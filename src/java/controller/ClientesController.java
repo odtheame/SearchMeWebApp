@@ -50,13 +50,13 @@ public class ClientesController extends HttpServlet {
                 + "     <div class=\"contenedor-contenido\">\n"
                 + "         <p>Bienvenido al panel de edición de un cliente. Aquí podrá establecer la información respectivamente, por favor ingrese los datos si es el caso y haga clic en actualizar o eliminar.</p>\n"
                 + "         <form class=\"formulario\" action=\"/SearchMeWebApp/ClientesController\" method=\"post\">\n"
-                + "             <input type=\"text\" maxlength=\"15\" placeholder=\"Primer Nombre\" name=\"prNombre\" value=\""+ prNombre +"\" autocomplete=\"off\" required>\n"
-                + "             <input type=\"text\" maxlength=\"15\" placeholder=\"Segundo Nombre\" name=\"sdNombre\" autocomplete=\"off\" value=\""+ sdNombre +"\">\n"
-                + "             <input type=\"text\" maxlength=\"15\" placeholder=\"Primer Apellido\" name=\"prApell\" value=\""+ prApell +"\" autocomplete=\"off\" required>\n"
-                + "             <input type=\"text\" maxlength=\"15\" placeholder=\"Segundo Apellido\" name=\"sdApell\" value=\""+ sdApell +"\" autocomplete=\"off\" required>\n"
-                + "             <input type=\"email\" maxlength=\"40\" placeholder=\"Correo\" name=\"correo\" value=\""+ correo +"\" autocomplete=\"off\" required>\n"
-                + "             <input type=\"text\" maxlength=\"15\" placeholder=\"Teléfono\" name=\"telefono\" value=\""+ telefono +"\" autocomplete=\"off\" required>\n"
-                + "             <input type=\"text\" maxlength=\"15\" placeholder=\"Dirección\" name=\"direccion\" value=\""+ direccion +"\" autocomplete=\"off\" required>\n"
+                + "             <input type=\"text\" maxlength=\"15\" placeholder=\"Primer Nombre\" name=\"prNombre\" value=\"" + prNombre + "\" autocomplete=\"off\" required>\n"
+                + "             <input type=\"text\" maxlength=\"15\" placeholder=\"Segundo Nombre\" name=\"sdNombre\" autocomplete=\"off\" value=\"" + sdNombre + "\">\n"
+                + "             <input type=\"text\" maxlength=\"15\" placeholder=\"Primer Apellido\" name=\"prApell\" value=\"" + prApell + "\" autocomplete=\"off\" required>\n"
+                + "             <input type=\"text\" maxlength=\"15\" placeholder=\"Segundo Apellido\" name=\"sdApell\" value=\"" + sdApell + "\" autocomplete=\"off\" required>\n"
+                + "             <input type=\"email\" maxlength=\"40\" placeholder=\"Correo\" name=\"correo\" value=\"" + correo + "\" autocomplete=\"off\" required>\n"
+                + "             <input type=\"text\" maxlength=\"15\" placeholder=\"Teléfono\" name=\"telefono\" value=\"" + telefono + "\" autocomplete=\"off\" required>\n"
+                + "             <input type=\"text\" maxlength=\"15\" placeholder=\"Dirección\" name=\"direccion\" value=\"" + direccion + "\" autocomplete=\"off\" required>\n"
                 + "             <input type=\"submit\" value=\"Actualizar\" name=\"btnOperacion\">\n"
                 + "             <input type=\"submit\" value=\"Eliminar\" name=\"btnOperacion\">\n"
                 + "         </form>\n"
@@ -82,11 +82,17 @@ public class ClientesController extends HttpServlet {
             int idCliente = 0;
             correo = request.getParameter("correoCliente");
             telefono = request.getParameter("telefonoCliente");
-            if (!"".equals(correo)) {
-                idCliente = dao.buscarClienteCorreo(correo, dao.findAll());
-            }
-            if (!"".equals(telefono)) {
-                idCliente = dao.buscarClienteTel(telefono, dao.findAll());
+            boolean correoBlank = correo.isBlank();
+            boolean telefonoBlank = telefono.isBlank();
+            if (!correoBlank && !telefonoBlank) {
+                idCliente = dao.buscarClienCorreoTel(correo, telefono);
+            } else {
+                if (!correoBlank) {
+                    idCliente = dao.buscarClienteCorreo(correo);
+                }
+                if (!telefonoBlank) {
+                    idCliente = dao.buscarClienteTel(telefono);
+                }
             }
             if (idCliente == 0) {
                 ou.print("<script>alert(\"Cliente no encontrado\");"
@@ -97,7 +103,7 @@ public class ClientesController extends HttpServlet {
             }
         }
         if (update) {
-            cliente.setIdCliente(dao.buscarClienteCorreo(correo, dao.findAll()));
+            cliente.setIdCliente(dao.buscarClienteCorreo(correo));
             initComponents(request);
             setInfo();
             dao.update(cliente);
@@ -106,7 +112,7 @@ public class ClientesController extends HttpServlet {
 
         }
         if (delete) {
-            dao.remove(dao.buscarClienteCorreo(correo, dao.findAll()));
+            dao.remove(dao.buscarClienteCorreo(correo));
             ou.print("<script>"
                     + "alert('Cliente eliminado con éxito');"
                     + "location.href=\"index.html\"</script>");

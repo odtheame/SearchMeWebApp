@@ -89,7 +89,7 @@ public class ClientesDAO {
                 if (listadoRecibosVacio) {
                     System.out.println("El registro con id: " + idCliente + " sera eliminado.");
                     //if (continuarOperacion()) {
-                        em.remove(cliente);     //Si el listado esta vacios entonces elimina el cliente
+                    em.remove(cliente);     //Si el listado esta vacios entonces elimina el cliente
                     //} else {
                     //    System.out.println("Operacion cancelada.");
                     //}
@@ -101,7 +101,7 @@ public class ClientesDAO {
                         System.out.println(listadoRecibos.toArray()[i]);
                     }
                     //if (continuarOperacion()) {
-                        em.remove(cliente);    //Elimina la bodega y las tiendas y departamentos bajo esta
+                    em.remove(cliente);    //Elimina la bodega y las tiendas y departamentos bajo esta
                     //} else {
                     //    System.out.println("Proceso cancelado.");
                     //}
@@ -184,44 +184,29 @@ public class ClientesDAO {
         return cliente;
     }
 
-    public int buscarClienteCorreo(String correoCliente, List<Object> listadoInfo) {
-        String mostrar = "";
-        for (int i = 0; i < listadoInfo.size(); i++) {
-            mostrar = mostrar.concat(listadoInfo.get(i) + "\n");
-        }
-        String[] listadoClientes = mostrar.split("\n");
-        for (String cliente : listadoClientes) {
-            String[] clienteIdInfo = cliente.split(": ");
-            String[] idClienteSeccion = cliente.split("] ");
-            String[] idClienteString = idClienteSeccion[0].split("\\[");
-            int idCliente = Integer.parseInt(idClienteString[1]);
-            String[] clienteComponentes = clienteIdInfo[1].split(" , ");
-            String correoClienteBuscado = clienteComponentes[4];
-            if (correoCliente.equals(correoClienteBuscado)) {
-                return idCliente;
-            }
-        }
-        return 0;
+    public int buscarClienteCorreo(String correoCliente) {
+        Query q = getEntityManager().createNamedQuery("Clientes.findIdByCorreoClien");
+        q.setParameter("correoClien", correoCliente);
+        String[] quitandoCorchete1 = q.getResultList().toString().split("\\[");
+        String[] quitandoCorchete2 = quitandoCorchete1[1].split("\\]");
+        return (quitandoCorchete2.length == 0) ? 0 : Integer.parseInt(quitandoCorchete2[0]);
     }
 
-    public int buscarClienteTel(String telefonoCliente, List<Object> listadoInfo) {
-        String mostrar = "";
-        for (int i = 0; i < listadoInfo.size(); i++) {
-            mostrar = mostrar.concat(listadoInfo.get(i) + "\n");
-        }
-        String[] listadoClientes = mostrar.split("\n");
-        for (String cliente : listadoClientes) {
-            String[] clienteIdInfo = cliente.split(": ");
-            String[] idClienteSeccion = cliente.split("] ");
-            String[] idClienteString = idClienteSeccion[0].split("\\[");
-            int idCliente = Integer.parseInt(idClienteString[1]);
-            String[] clienteComponentes = clienteIdInfo[1].split(" , ");
-            String telClienteBuscado = clienteComponentes[5];
-            if (telefonoCliente.equals(telClienteBuscado)) {
-                return idCliente;
-            }
-        }
-        return 0;
+    public int buscarClienteTel(String telefonoCliente) {
+        Query q = getEntityManager().createNamedQuery("Clientes.findIdByTelClien");
+        q.setParameter("telClien", telefonoCliente);
+        String[] quitandoCorchete1 = q.getResultList().toString().split("\\[");
+        String[] quitandoCorchete2 = quitandoCorchete1[1].split("\\]");
+        return (quitandoCorchete2.length == 0) ? 0 : Integer.parseInt(quitandoCorchete2[0]);
+    }
+
+    public int buscarClienCorreoTel(String correoCliente, String telefonoCliente) {
+        Query q = getEntityManager().createNamedQuery("Clientes.findIdByCorreoTelClien");
+        q.setParameter("correoClien", correoCliente);
+        q.setParameter("telClien", telefonoCliente);
+        String[] quitandoCorchete1 = q.getResultList().toString().split("\\[");
+        String[] quitandoCorchete2 = quitandoCorchete1[1].split("\\]");
+        return (quitandoCorchete2.length == 0) ? 0 : Integer.parseInt(quitandoCorchete2[0]);
     }
 
     public String obtenerClientePrNom(int idCliente) {
@@ -231,21 +216,21 @@ public class ClientesDAO {
         String clientePrNom = clienteComponentes[0];
         return clientePrNom;
     }
-    
+
     public String obtenerClienteSdNom(int idCliente) {
         String cliente = obtenerCliente(idCliente) + "";
         String[] clienteComponentes = cliente.split(" , ");
         String clienteSdNom = clienteComponentes[1];
         return clienteSdNom;
     }
-    
+
     public String obtenerClientePrApell(int idCliente) {
         String cliente = obtenerCliente(idCliente) + "";
         String[] clienteComponentes = cliente.split(" , ");
         String clientePrApell = clienteComponentes[2];
         return clientePrApell;
     }
-    
+
     public String obtenerClienteSdApell(int idCliente) {
         String cliente = obtenerCliente(idCliente) + "";
         String[] clienteComponentes = cliente.split(" , ");
@@ -266,7 +251,7 @@ public class ClientesDAO {
         String clienteTel = clienteComponentes[5];
         return clienteTel;
     }
-    
+
     public String obtenerClienteDir(int idCliente) {
         String cliente = obtenerCliente(idCliente) + "";
         String[] clienteComponentes = cliente.split(" , ");

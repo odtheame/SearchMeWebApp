@@ -185,25 +185,13 @@ public class DepartamentosDAO {
         return departamento;
     }
 
-    public int buscarDepartamentoNom(String nombreDepartamento, List<Object> listadoInfo) {
-        String mostrar = "";
-        for (int i = 0; i < listadoInfo.size(); i++) {
-            mostrar = mostrar.concat(listadoInfo.get(i) + "\n");
+    public int buscarDepartamentoNom(String nombreDepartamento) {
+        Query q = getEntityManager().createNamedQuery("Departamentos.findIdByNomDept");
+        q.setParameter("nomDept", nombreDepartamento);
+        String [] quitandoCorchete1 = q.getResultList().toString().split("\\[");
+        String [] quitandoCorchete2 = quitandoCorchete1[1].split("\\]");
+        return (quitandoCorchete2.length==0)?0:Integer.parseInt(quitandoCorchete2[0]);
         }
-        String[] listadoDepartamentos = mostrar.split("\n");
-        for (String departamento : listadoDepartamentos) {
-            String[] departamentoIdInfo = departamento.split(": ");
-            String[] idDepartamentoSeccion = departamento.split("] ");
-            String[] idDepartamentoString = idDepartamentoSeccion[0].split("\\[");
-            int idDepartamento = Integer.parseInt(idDepartamentoString[1]);
-            String[] departamentoComponentes = departamentoIdInfo[1].split(" , ");
-            String nomDepartamentoBuscado = departamentoComponentes[0];
-            if (nombreDepartamento.equals(nomDepartamentoBuscado)) {
-                return idDepartamento;
-            }
-        }
-        return 0;
-    }
 
     public String obtenerDepartamentoNom(int idDepartamento) {
         String departamento = obtenerDepartamento(idDepartamento) + "";

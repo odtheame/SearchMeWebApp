@@ -186,44 +186,29 @@ public class TiendasDAO {
         return tienda;
     }
 
-    public int buscarTiendaNom(String nombreTienda, List<Object> listadoInfo) {
-        String mostrar = "";
-        for (int i = 0; i < listadoInfo.size(); i++) {
-            mostrar = mostrar.concat(listadoInfo.get(i) + "\n");
-        }
-        String[] listadoTiendas = mostrar.split("\n");
-        for (String tienda : listadoTiendas) {
-            String[] tiendaIdInfo = tienda.split(": ");
-            String[] idTiendaSeccion = tienda.split("] ");
-            String[] idTiendaString = idTiendaSeccion[0].split("\\[");
-            int idTienda = Integer.parseInt(idTiendaString[1]);
-            String[] tiendaComponentes = tiendaIdInfo[1].split(" , ");
-            String nomTiendaBuscado = tiendaComponentes[0];
-            if (nomTiendaBuscado.equals(nomTiendaBuscado)) {
-                return idTienda;
-            }
-        }
-        return 0;
+    public int buscarTiendaNom(String nombreTienda) {
+        Query q = getEntityManager().createNamedQuery("Tiendas.findIdByNomTienda");
+        q.setParameter("nomTienda", nombreTienda);
+        String[] quitandoCorchete1 = q.getResultList().toString().split("\\[");
+        String[] quitandoCorchete2 = quitandoCorchete1[1].split("\\]");
+        return (quitandoCorchete2.length == 0) ? 0 : Integer.parseInt(quitandoCorchete2[0]);
     }
 
-    public int buscarTiendaTel(String telefonoTienda, List<Object> listadoInfo) {
-        String mostrar = "";
-        for (int i = 0; i < listadoInfo.size(); i++) {
-            mostrar = mostrar.concat(listadoInfo.get(i) + "\n");
-        }
-        String[] listadoTiendas = mostrar.split("\n");
-        for (String tienda : listadoTiendas) {
-            String[] tiendaIdInfo = tienda.split(": ");
-            String[] idTiendaSeccion = tienda.split("] ");
-            String[] idTiendaString = idTiendaSeccion[0].split("\\[");
-            int idTienda = Integer.parseInt(idTiendaString[1]);
-            String[] tiendaComponentes = tiendaIdInfo[3].split(" , ");
-            String telTiendaBuscada = tiendaComponentes[2];
-            if (telefonoTienda.equals(telTiendaBuscada)) {
-                return idTienda;
-            }
-        }
-        return 0;
+    public int buscarTiendaTel(String telefonoTienda) {
+        Query q = getEntityManager().createNamedQuery("Tiendas.findIdByTelTienda");
+        q.setParameter("telTienda", telefonoTienda);
+        String[] quitandoCorchete1 = q.getResultList().toString().split("\\[");
+        String[] quitandoCorchete2 = quitandoCorchete1[1].split("\\]");
+        return (quitandoCorchete2.length == 0) ? 0 : Integer.parseInt(quitandoCorchete2[0]);
+    }
+
+    public int buscarTiendaNomTel(String nombreTienda, String telefonoTienda) {
+        Query q = getEntityManager().createNamedQuery("Tiendas.findIdByNomTelTienda");
+        q.setParameter("nomTienda", nombreTienda);
+        q.setParameter("telTienda", telefonoTienda);
+        String[] quitandoCorchete1 = q.getResultList().toString().split("\\[");
+        String[] quitandoCorchete2 = quitandoCorchete1[1].split("\\]");
+        return (quitandoCorchete2.length == 0) ? 0 : Integer.parseInt(quitandoCorchete2[0]);
     }
 
     public String obtenerTiendaNom(int idTienda) {

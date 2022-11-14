@@ -168,44 +168,29 @@ public class EmpleadosDAO {
         return empleado;
     }
 
-    public int buscarEmpleadoCorreo(String correoEmpleado, List<Object> listadoInfo) {
-        String mostrar = "";
-        for (int i = 0; i < listadoInfo.size(); i++) {
-            mostrar = mostrar.concat(listadoInfo.get(i) + "\n");
-        }
-        String[] listadoEmpleados = mostrar.split("\n");
-        for (String empleado : listadoEmpleados) {
-            String[] empleadoIdInfo = empleado.split(": ");
-            String[] idEmpleadoSeccion = empleado.split("] ");
-            String[] idEmpleadoString = idEmpleadoSeccion[0].split("\\[");
-            int idEmpleado = Integer.parseInt(idEmpleadoString[1]);
-            String[] empleadoComponentes = empleadoIdInfo[1].split(" , ");
-            String correoEmpleadoBuscado = empleadoComponentes[6];
-            if (correoEmpleado.equals(correoEmpleadoBuscado)) {
-                return idEmpleado;
-            }
-        }
-        return 0;
+    public int buscarEmpleadoCorreo(String correoEmpleado) {
+        Query q = getEntityManager().createNamedQuery("Empleados.findIdByCorreoEmpl");
+        q.setParameter("correoEmpl", correoEmpleado);
+        String[] quitandoCorchete1 = q.getResultList().toString().split("\\[");
+        String[] quitandoCorchete2 = quitandoCorchete1[1].split("\\]");
+        return (quitandoCorchete2.length == 0) ? 0 : Integer.parseInt(quitandoCorchete2[0]);
     }
 
-    public int buscarEmpleadoTel(String telefonoEmpleado, List<Object> listadoInfo) {
-        String mostrar = "";
-        for (int i = 0; i < listadoInfo.size(); i++) {
-            mostrar = mostrar.concat(listadoInfo.get(i) + "\n");
-        }
-        String[] listadoEmpleados = mostrar.split("\n");
-        for (String empleado : listadoEmpleados) {
-            String[] empleadoIdInfo = empleado.split(": ");
-            String[] idEmpleadoSeccion = empleado.split("] ");
-            String[] idEmpleadoString = idEmpleadoSeccion[0].split("\\[");
-            int idEmpleado = Integer.parseInt(idEmpleadoString[1]);
-            String[] empleadoComponentes = empleadoIdInfo[1].split(" , ");
-            String telefonoEmpleadoBuscado = empleadoComponentes[5];
-            if (telefonoEmpleado.equals(telefonoEmpleadoBuscado)) {
-                return idEmpleado;
-            }
-        }
-        return 0;
+    public int buscarEmpleadoTel(String telefonoEmpleado) {
+        Query q = getEntityManager().createNamedQuery("Empleados.findIdByTelEmpl");
+        q.setParameter("telEmpl", telefonoEmpleado);
+        String[] quitandoCorchete1 = q.getResultList().toString().split("\\[");
+        String[] quitandoCorchete2 = quitandoCorchete1[1].split("\\]");
+        return (quitandoCorchete2.length == 0) ? 0 : Integer.parseInt(quitandoCorchete2[0]);
+    }
+
+    public int buscarEmplCorreoTel(String correoEmpleado, String telefonoEmpleado) {
+        Query q = getEntityManager().createNamedQuery("Empleados.findIdByCorreoTelEmpl");
+        q.setParameter("correoEmpl", correoEmpleado);
+        q.setParameter("telEmpl", telefonoEmpleado);
+        String[] quitandoCorchete1 = q.getResultList().toString().split("\\[");
+        String[] quitandoCorchete2 = quitandoCorchete1[1].split("\\]");
+        return (quitandoCorchete2.length == 0) ? 0 : Integer.parseInt(quitandoCorchete2[0]);
     }
 
     public String obtenerEmpleadoPrNom(int idEmpleado) {

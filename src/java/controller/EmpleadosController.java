@@ -109,11 +109,17 @@ public class EmpleadosController extends HttpServlet {
             int idEmpleado = 0;
             correo = request.getParameter("correoEmpleado");
             telefono = request.getParameter("telefonoEmpleado");
-            if (!"".equals(correo)) {
-                idEmpleado = dao.buscarEmpleadoCorreo(correo, dao.findAll());
-            }
-            if (!"".equals(telefono)) {
-                idEmpleado = dao.buscarEmpleadoTel(telefono, dao.findAll());
+            boolean correoBlank = correo.isBlank();
+            boolean telefonoBlank = telefono.isBlank();
+            if (!correoBlank && !telefonoBlank) {
+                idEmpleado = dao.buscarEmplCorreoTel(correo, telefono);
+            } else {
+                if (!correoBlank) {
+                    idEmpleado = dao.buscarEmpleadoCorreo(correo);
+                }
+                if (!telefonoBlank) {
+                    idEmpleado = dao.buscarEmpleadoTel(telefono);
+                }
             }
             if (idEmpleado == 0) {
                 ou.print("<script>alert(\"Empleado no encontrado\");"
@@ -123,7 +129,7 @@ public class EmpleadosController extends HttpServlet {
             }
         }
         if (update) {
-            empleado.setIdEmpleado(dao.buscarEmpleadoCorreo(correo, dao.findAll()));
+            empleado.setIdEmpleado(dao.buscarEmpleadoCorreo(correo));
             initComponents(request);
             setInfo();
             dao.update(empleado);
@@ -132,7 +138,7 @@ public class EmpleadosController extends HttpServlet {
 
         }
         if (delete) {
-            dao.remove(dao.buscarEmpleadoCorreo(correo, dao.findAll()));
+            dao.remove(dao.buscarEmpleadoCorreo(correo));
             ou.print("<script>"
                     + "alert('Empleado eliminado con éxito');"
                     + "location.href=\"index.html\"</script>");

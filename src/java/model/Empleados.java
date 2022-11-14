@@ -39,9 +39,12 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Empleados.findByDirEmpl", query = "SELECT e FROM Empleados e WHERE e.dirEmpl = :dirEmpl"),
     @NamedQuery(name = "Empleados.findByTelEmpl", query = "SELECT e FROM Empleados e WHERE e.telEmpl = :telEmpl"),
     @NamedQuery(name = "Empleados.findByCorreoEmpl", query = "SELECT e FROM Empleados e WHERE e.correoEmpl = :correoEmpl"),
+    @NamedQuery(name = "Empleados.findIdByCorreoEmpl", query = "SELECT e.idEmpleado FROM Empleados e WHERE e.correoEmpl = :correoEmpl"),
+    @NamedQuery(name = "Empleados.findIdByTelEmpl", query = "SELECT e.idEmpleado FROM Empleados e WHERE e.telEmpl = :telEmpl"),
     @NamedQuery(name = "Empleados.findByFechaNaciEmpl", query = "SELECT e FROM Empleados e WHERE e.fechaNaciEmpl = :fechaNaciEmpl"),
     @NamedQuery(name = "Empleados.findByCiudEmpl", query = "SELECT e FROM Empleados e WHERE e.ciudEmpl = :ciudEmpl"),
-    @NamedQuery(name = "Empleados.findByPaisEmpl", query = "SELECT e FROM Empleados e WHERE e.paisEmpl = :paisEmpl")})
+    @NamedQuery(name = "Empleados.findByPaisEmpl", query = "SELECT e FROM Empleados e WHERE e.paisEmpl = :paisEmpl"),
+    @NamedQuery(name = "Empleados.findIdByCorreoTelEmpl", query = "SELECT e.idEmpleado FROM Empleados e WHERE e.correoEmpl = :correoEmpl AND e.telEmpl = :telEmpl")})
 public class Empleados implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -233,7 +236,7 @@ public class Empleados implements Serializable {
 
     @Override
     public String toString() {
-        return "["+idEmpleado+"] : "+prNomEmpl+" , "+sdNomEmpl+" , "+prApellEmpl+" , "+sdApellEmpl+" , "+dirEmpl+" , "+telEmpl+" , "+correoEmpl+" , "+fechaNaciEmpl+" , "+ciudEmpl+" , "+paisEmpl+" , "+idCargo+" , "+idDept;
+        return "[" + idEmpleado + "] : " + prNomEmpl + " , " + sdNomEmpl + " , " + prApellEmpl + " , " + sdApellEmpl + " , " + dirEmpl + " , " + telEmpl + " , " + correoEmpl + " , " + fechaNaciEmpl + " , " + ciudEmpl + " , " + paisEmpl + " , " + idCargo + " , " + idDept;
     }
-    
+
 }

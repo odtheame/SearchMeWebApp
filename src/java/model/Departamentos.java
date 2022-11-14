@@ -34,6 +34,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Departamentos.findAll", query = "SELECT d FROM Departamentos d"),
     @NamedQuery(name = "Departamentos.findByIdDept", query = "SELECT d FROM Departamentos d WHERE d.idDept = :idDept"),
     @NamedQuery(name = "Departamentos.findByNomDept", query = "SELECT d FROM Departamentos d WHERE d.nomDept = :nomDept"),
+    @NamedQuery(name = "Departamentos.findIdByNomDept", query = "SELECT d.idDept FROM Departamentos d WHERE d.nomDept = :nomDept"),
     @NamedQuery(name = "Departamentos.findByDirDept", query = "SELECT d FROM Departamentos d WHERE d.dirDept = :dirDept")})
 public class Departamentos implements Serializable {
 
@@ -131,7 +132,7 @@ public class Departamentos implements Serializable {
 
     @Override
     public String toString() {
-        return "["+idDept+"] : "+nomDept+" , "+dirDept+" , "+idBodega;
+        return "[" + idDept + "] : " + nomDept + " , " + dirDept + " , " + idBodega;
     }
-    
+
 }

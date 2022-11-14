@@ -36,7 +36,10 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Clientes.findBySdApellClien", query = "SELECT c FROM Clientes c WHERE c.sdApellClien = :sdApellClien"),
     @NamedQuery(name = "Clientes.findByCorreoClien", query = "SELECT c FROM Clientes c WHERE c.correoClien = :correoClien"),
     @NamedQuery(name = "Clientes.findByTelClien", query = "SELECT c FROM Clientes c WHERE c.telClien = :telClien"),
-    @NamedQuery(name = "Clientes.findByDirClien", query = "SELECT c FROM Clientes c WHERE c.dirClien = :dirClien")})
+    @NamedQuery(name = "Clientes.findIdByCorreoClien", query = "SELECT c.idCliente FROM Clientes c WHERE c.correoClien = :correoClien"),
+    @NamedQuery(name = "Clientes.findIdByTelClien", query = "SELECT c.idCliente FROM Clientes c WHERE c.telClien = :telClien"),
+    @NamedQuery(name = "Clientes.findByDirClien", query = "SELECT c FROM Clientes c WHERE c.dirClien = :dirClien"),
+    @NamedQuery(name = "Clientes.findIdByCorreoTelClien", query = "SELECT c.idCliente FROM Clientes c WHERE c.correoClien = :correoClien AND c.telClien = :telClien")})
 public class Clientes implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -180,7 +183,7 @@ public class Clientes implements Serializable {
 
     @Override
     public String toString() {
-        return "["+idCliente+"] : "+prNomClien+" , "+sdNomClien+" , "+prApellClien+" , "+sdApellClien+" , "+correoClien+" , "+telClien+" , "+dirClien;
+        return "[" + idCliente + "] : " + prNomClien + " , " + sdNomClien + " , " + prApellClien + " , " + sdApellClien + " , " + correoClien + " , " + telClien + " , " + dirClien;
     }
-    
+
 }

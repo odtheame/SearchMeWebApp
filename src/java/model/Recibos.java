@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Recibos.findAll", query = "SELECT r FROM Recibos r"),
     @NamedQuery(name = "Recibos.findByIdRecibo", query = "SELECT r FROM Recibos r WHERE r.idRecibo = :idRecibo"),
     @NamedQuery(name = "Recibos.findByNumRecibo", query = "SELECT r FROM Recibos r WHERE r.numRecibo = :numRecibo"),
+    @NamedQuery(name = "Recibos.findIdByNumRecibo", query = "SELECT r.idRecibo FROM Recibos r WHERE r.numRecibo = :numRecibo"),
     @NamedQuery(name = "Recibos.findByFechaCompra", query = "SELECT r FROM Recibos r WHERE r.fechaCompra = :fechaCompra"),
     @NamedQuery(name = "Recibos.findByValorTotal", query = "SELECT r FROM Recibos r WHERE r.valorTotal = :valorTotal")})
 public class Recibos implements Serializable {
@@ -144,7 +145,7 @@ public class Recibos implements Serializable {
 
     @Override
     public String toString() {
-        return "["+idRecibo+"] : "+numRecibo+" , "+fechaCompra+" , "+valorTotal+" , "+idTienda+" , "+idCliente;
+        return "[" + idRecibo + "] : " + numRecibo + " , " + fechaCompra + " , " + valorTotal + " , " + idTienda + " , " + idCliente;
     }
-    
+
 }

@@ -32,8 +32,11 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Bodegas.findAll", query = "SELECT b FROM Bodegas b"),
     @NamedQuery(name = "Bodegas.findByIdBodega", query = "SELECT b FROM Bodegas b WHERE b.idBodega = :idBodega"),
     @NamedQuery(name = "Bodegas.findByNomBodega", query = "SELECT b FROM Bodegas b WHERE b.nomBodega = :nomBodega"),
+    @NamedQuery(name = "Bodegas.findIdByNomBodega", query = "SELECT b.idBodega FROM Bodegas b WHERE b.nomBodega = :nomBodega"),
     @NamedQuery(name = "Bodegas.findByDirBodega", query = "SELECT b FROM Bodegas b WHERE b.dirBodega = :dirBodega"),
-    @NamedQuery(name = "Bodegas.findByTelBodega", query = "SELECT b FROM Bodegas b WHERE b.telBodega = :telBodega")})
+    @NamedQuery(name = "Bodegas.findByTelBodega", query = "SELECT b FROM Bodegas b WHERE b.telBodega = :telBodega"),
+    @NamedQuery(name = "Bodegas.findIdByTelBodega", query = "SELECT b.idBodega FROM Bodegas b WHERE b.telBodega = :telBodega"),
+    @NamedQuery(name = "Bodegas.findIdByNomTelBodega", query = "SELECT b.idBodega FROM Bodegas b WHERE b.nomBodega = :nomBodega AND b.telBodega = :telBodega")})
 public class Bodegas implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -142,7 +145,7 @@ public class Bodegas implements Serializable {
 
     @Override
     public String toString() {
-        return "["+idBodega+"] : "+nomBodega+" , "+dirBodega+" , "+telBodega;
+        return "[" + idBodega + "] : " + nomBodega + " , " + dirBodega + " , " + telBodega;
     }
-    
+
 }

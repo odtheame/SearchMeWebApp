@@ -82,11 +82,17 @@ public class TiendasController extends HttpServlet {
             int idTienda = 0;
             nombre = request.getParameter("nombreTienda");
             telefono = request.getParameter("telefonoTienda");
-            if (!"".equals(nombre)) {
-                idTienda = dao.buscarTiendaNom(nombre, dao.findAll());
-            }
-            if (!"".equals(telefono)) {
-                idTienda = dao.buscarTiendaTel(telefono, dao.findAll());
+            boolean nombreBlank = nombre.isBlank();
+            boolean telefonoBlank = telefono.isBlank();
+            if (!nombreBlank && !telefonoBlank) {
+                idTienda = dao.buscarTiendaNomTel(nombre, telefono);
+            } else {
+                if (!nombreBlank) {
+                    idTienda = dao.buscarTiendaNom(nombre);
+                }
+                if (!telefonoBlank) {
+                    idTienda = dao.buscarTiendaTel(telefono);
+                }
             }
             if (idTienda == 0) {
                 ou.print("<script>alert(\"Tienda no encontrada\");"
@@ -96,7 +102,7 @@ public class TiendasController extends HttpServlet {
             }
         }
         if (update) {
-            tienda.setIdTienda(dao.buscarTiendaNom(nombre, dao.findAll()));
+            tienda.setIdTienda(dao.buscarTiendaNom(nombre));
             initComponents(request);
             setInfo();
             dao.update(tienda);
@@ -104,7 +110,7 @@ public class TiendasController extends HttpServlet {
                     + "location.href=\"index.html\"</script>");
         }
         if (delete) {
-            dao.remove(dao.buscarTiendaNom(nombre, dao.findAll()));
+            dao.remove(dao.buscarTiendaNom(nombre));
             ou.print("<script>"
                     + "alert('Tienda eliminada con exito');"
                     + "location.href=\"index.html\"</script>");

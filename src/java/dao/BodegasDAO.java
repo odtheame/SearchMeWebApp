@@ -92,9 +92,9 @@ public class BodegasDAO {
                 if (listadoTiendasVacio && listadoDepartamentosVacio) {
                     System.out.println("El registro con id: " + idBodega + " sera eliminado.");
                     //if (continuarOperacion()) {
-                        em.remove(bodega);     //Si ambos estan vacios entonces elimina la bodega
+                    em.remove(bodega);     //Si ambos estan vacios entonces elimina la bodega
                     //} else {
-                        //System.out.println("Operacion cancelada.");
+                    //System.out.println("Operacion cancelada.");
                     //}
                 } else {
                     System.out.println("Eliminar esta bodega, eliminara los siguientes registros."
@@ -111,11 +111,11 @@ public class BodegasDAO {
                             System.out.println(listadoDepartamentos.toArray()[i]);
                         }
                     }
-                   // if (continuarOperacion()) {
-                        em.remove(bodega);    //Elimina la bodega y las tiendas y departamentos bajo esta
+                    // if (continuarOperacion()) {
+                    em.remove(bodega);    //Elimina la bodega y las tiendas y departamentos bajo esta
                     //} else {
-                   //     System.out.println("Proceso cancelado.");
-                   // }
+                    //     System.out.println("Proceso cancelado.");
+                    // }
                 }
                 em.getTransaction().commit();    //Envia el dato a la bd
             } else {
@@ -196,44 +196,29 @@ public class BodegasDAO {
         return bodega;
     }
 
-    public int buscarBodegaNom(String nombreBodega, List<Object> listadoInfo) {
-        String mostrar = "";
-        for (int i = 0; i < listadoInfo.size(); i++) {
-            mostrar = mostrar.concat(listadoInfo.get(i) + "\n");
-        }
-        String[] listadoBodegas = mostrar.split("\n");
-        for (String bodega : listadoBodegas) {
-            String[] bodegaIdInfo = bodega.split(": ");
-            String[] idBodegaSeccion = bodega.split("] ");
-            String[] idBodegaString = idBodegaSeccion[0].split("\\[");
-            int idBodega = Integer.parseInt(idBodegaString[1]);
-            String[] bodegaComponentes = bodegaIdInfo[1].split(" , ");
-            String nomBodegaBuscada = bodegaComponentes[0];
-            if (nombreBodega.equals(nomBodegaBuscada)) {
-                return idBodega;
-            }
-        }
-        return 0;
+    public int buscarBodegaNom(String nombreBodega) {
+        Query q = getEntityManager().createNamedQuery("Bodegas.findIdByNomBodega");
+        q.setParameter("nomBodega", nombreBodega);
+        String[] quitandoCorchete1 = q.getResultList().toString().split("\\[");
+        String[] quitandoCorchete2 = quitandoCorchete1[1].split("\\]");
+        return (quitandoCorchete2.length == 0) ? 0 : Integer.parseInt(quitandoCorchete2[0]);
     }
 
-    public int buscarBodegaTel(String telefonoBodega, List<Object> listadoInfo) {
-        String mostrar = "";
-        for (int i = 0; i < listadoInfo.size(); i++) {
-            mostrar = mostrar.concat(listadoInfo.get(i) + "\n");
-        }
-        String[] listadoBodegas = mostrar.split("\n");
-        for (String bodega : listadoBodegas) {
-            String[] bodegaIdInfo = bodega.split(": ");
-            String[] idBodegaSeccion = bodega.split("] ");
-            String[] idBodegaString = idBodegaSeccion[0].split("\\[");
-            int idBodega = Integer.parseInt(idBodegaString[1]);
-            String[] bodegaComponentes = bodegaIdInfo[1].split(" , ");
-            String telBodegaBuscada = bodegaComponentes[2];
-            if (telefonoBodega.equals(telBodegaBuscada)) {
-                return idBodega;
-            }
-        }
-        return 0;
+    public int buscarBodegaTel(String telefonoBodega) {
+        Query q = getEntityManager().createNamedQuery("Bodegas.findIdByTelBodega");
+        q.setParameter("telBodega", telefonoBodega);
+        String[] quitandoCorchete1 = q.getResultList().toString().split("\\[");
+        String[] quitandoCorchete2 = quitandoCorchete1[1].split("\\]");
+        return (quitandoCorchete2.length == 0) ? 0 : Integer.parseInt(quitandoCorchete2[0]);
+    }
+
+    public int buscarBodegaNomTel(String nombreBodega, String telefonoBodega) {
+        Query q = getEntityManager().createNamedQuery("Bodegas.findIdByNomTelBodega");
+        q.setParameter("nomBodega", nombreBodega);
+        q.setParameter("telBodega", telefonoBodega);
+        String[] quitandoCorchete1 = q.getResultList().toString().split("\\[");
+        String[] quitandoCorchete2 = quitandoCorchete1[1].split("\\]");
+        return (quitandoCorchete2.length == 0) ? 0 : Integer.parseInt(quitandoCorchete2[0]);
     }
 
     public String obtenerBodegaNom(int idBodega) {

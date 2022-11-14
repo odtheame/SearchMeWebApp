@@ -34,8 +34,11 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Tiendas.findAll", query = "SELECT t FROM Tiendas t"),
     @NamedQuery(name = "Tiendas.findByIdTienda", query = "SELECT t FROM Tiendas t WHERE t.idTienda = :idTienda"),
     @NamedQuery(name = "Tiendas.findByNomTienda", query = "SELECT t FROM Tiendas t WHERE t.nomTienda = :nomTienda"),
+    @NamedQuery(name = "Tiendas.findIdByNomTienda", query = "SELECT t.idTienda FROM Tiendas t WHERE t.nomTienda = :nomTienda"),
     @NamedQuery(name = "Tiendas.findByDirTienda", query = "SELECT t FROM Tiendas t WHERE t.dirTienda = :dirTienda"),
-    @NamedQuery(name = "Tiendas.findByTelTienda", query = "SELECT t FROM Tiendas t WHERE t.telTienda = :telTienda")})
+    @NamedQuery(name = "Tiendas.findByTelTienda", query = "SELECT t FROM Tiendas t WHERE t.telTienda = :telTienda"),
+    @NamedQuery(name = "Tiendas.findIdByTelTienda", query = "SELECT t.idTienda FROM Tiendas t WHERE t.telTienda = :telTienda"),
+    @NamedQuery(name = "Tiendas.findIdByNomTelTienda", query = "SELECT t.idTienda FROM Tiendas t WHERE t.nomTienda = :nomTienda AND t.telTienda = :telTienda")})
 public class Tiendas implements Serializable {
 
     private static final long serialVersionUID = 1L;

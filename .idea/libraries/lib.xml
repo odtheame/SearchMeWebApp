@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="lib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/build/web/WEB-INF/lib/org.eclipse.persistence.jpa.jpql-2.7.9.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/web/WEB-INF/lib/mysql-connector-java-8.0.30.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/web/WEB-INF/lib/org.eclipse.persistence.asm-9.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/web/WEB-INF/lib/org.eclipse.persistence.core-2.7.9.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/web/WEB-INF/lib/javax.persistence-2.2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/web/WEB-INF/lib/org.eclipse.persistence.jpa-2.7.9.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/web/WEB-INF/lib/org.eclipse.persistence.antlr-2.7.9.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/web/WEB-INF/lib/org.eclipse.persistence.moxy-2.7.9.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

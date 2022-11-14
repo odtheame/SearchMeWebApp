@@ -71,9 +71,7 @@ public class CargosController extends HttpServlet {
                 setInfo();
                 dao.create(cargo);
                 break;
-
         }
-
         if (create) {
             initComponents(request);
             setInfo();
@@ -83,7 +81,7 @@ public class CargosController extends HttpServlet {
             int idCargo = 0;
             nombre = request.getParameter("nombreCargo");
             if (!"".equals(nombre)) {
-                idCargo = dao.buscarCargoNom(nombre, dao.findAll());
+                idCargo = dao.buscarCargoNom(nombre);
             }
             if (idCargo == 0) {
                 ou.print("<script>alert(\"Cargo no encontrado\");"
@@ -93,7 +91,7 @@ public class CargosController extends HttpServlet {
             }
         }
         if (update) {
-            cargo.setIdCargo(dao.buscarCargoNom(nombre, dao.findAll()));
+            cargo.setIdCargo(dao.buscarCargoNom(nombre));
             initComponents(request);
             setInfo();
             dao.update(cargo);
@@ -101,7 +99,7 @@ public class CargosController extends HttpServlet {
                     + "location.href=\"index.html\"</script>");
         }
         if (delete) {
-            dao.remove(dao.buscarCargoNom(nombre, dao.findAll()));
+            dao.remove(dao.buscarCargoNom(nombre));
             ou.print("<script>"
                     + "alert('Cargo eliminado con éxito');"
                     + "location.href=\"index.html\"</script>");

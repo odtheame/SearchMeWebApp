@@ -95,7 +95,7 @@ public class RecibosController extends HttpServlet {
             int idRecibo = 0;
             numRecibo = request.getParameter("numeroRecibo");
             if (!"".equals(numRecibo)) {
-                idRecibo = dao.buscarReciboNum(numRecibo, dao.findAll());
+                idRecibo = dao.buscarReciboNum(numRecibo);
             }
             if (idRecibo == 0) {
                 ou.print("<script>alert(\"Recibo no encontrado\");"
@@ -105,7 +105,7 @@ public class RecibosController extends HttpServlet {
             }
         }
         if (update) {
-            recibo.setIdRecibo(dao.buscarReciboNum(numRecibo, dao.findAll()));
+            recibo.setIdRecibo(dao.buscarReciboNum(numRecibo));
             initComponents(request);
             setInfo();
             dao.update(recibo);
@@ -113,7 +113,7 @@ public class RecibosController extends HttpServlet {
                     + "location.href=\"index.html\"</script>");
         }
         if (delete) {
-            dao.remove(dao.buscarReciboNum(numRecibo, dao.findAll()));
+            dao.remove(dao.buscarReciboNum(numRecibo));
             ou.print("<script>"
                     + "alert('Recibo eliminado con exito');"
                     + "location.href=\"index.html\"</script>");

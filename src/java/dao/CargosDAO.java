@@ -183,24 +183,12 @@ public class CargosDAO {
         }
         return cargo;
     }
-    public int buscarCargoNom(String nombreCargo, List<Object> listadoInfo) {
-        String mostrar = "";
-        for (int i = 0; i < listadoInfo.size(); i++) {
-            mostrar = mostrar.concat(listadoInfo.get(i) + "\n");
-        }
-        String[] listadoCargos = mostrar.split("\n");
-        for (String cargo : listadoCargos) {
-            String[] cargoIdInfo = cargo.split(": ");
-            String[] idCargoSeccion = cargo.split("] ");
-            String[] idCargoString = idCargoSeccion[0].split("\\[");
-            int idCargo = Integer.parseInt(idCargoString[1]);
-            String[] cargoComponentes = cargoIdInfo[1].split(" , ");
-            String nomCargoBuscado = cargoComponentes[0];
-            if (nombreCargo.equals(nomCargoBuscado)) {
-                return idCargo;
-            }
-        }
-        return 0;
+    public int buscarCargoNom(String nombreCargo) {
+        Query q = getEntityManager().createNamedQuery("Cargos.findIdByNomCargo");
+        q.setParameter("nomCargo", nombreCargo);
+        String [] quitandoCorchete1 = q.getResultList().toString().split("\\[");
+        String [] quitandoCorchete2 = quitandoCorchete1[1].split("\\]");
+        return (quitandoCorchete2.length==0)?0:Integer.parseInt(quitandoCorchete2[0]);
     }
     public String obtenerCargoNom(int idCargo) {
         String cargo = obtenerCargo(idCargo) + "";

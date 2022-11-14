@@ -80,7 +80,7 @@ public class DepartamentosController extends HttpServlet {
             int idDepartamento = 0;
             nombre = request.getParameter("nombreDepartamento");
             if (!"".equals(nombre)) {
-                idDepartamento = dao.buscarDepartamentoNom(nombre, dao.findAll());
+                idDepartamento = dao.buscarDepartamentoNom(nombre);
             }
             if (idDepartamento == 0) {
                 ou.print("<script>alert(\"Departamento no encontrado\");"
@@ -90,7 +90,7 @@ public class DepartamentosController extends HttpServlet {
             }
         }
         if (update) {
-            departamento.setIdDept(dao.buscarDepartamentoNom(nombre, dao.findAll()));
+            departamento.setIdDept(dao.buscarDepartamentoNom(nombre));
             initComponents(request);
             setInfo();
             dao.update(departamento);
@@ -99,7 +99,7 @@ public class DepartamentosController extends HttpServlet {
 
         }
         if (delete) {
-            dao.remove(dao.buscarDepartamentoNom(nombre, dao.findAll()));
+            dao.remove(dao.buscarDepartamentoNom(nombre));
             ou.print("<script>"
                     + "alert('Departamento eliminado con éxito');"
                     + "location.href=\"index.html\"</script>");

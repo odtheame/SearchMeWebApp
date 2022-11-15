@@ -45,7 +45,6 @@ public class ClientesDAO {
             em.getTransaction().begin();    //Inicia una transaccion que se aloja en el area de conexion
             em.persist(cliente);    //Persiste el dato en el objeto
             em.getTransaction().commit();   //Envia el dato a la bd
-
         } finally {
             if (em != null) {
                 em.close();
@@ -60,7 +59,6 @@ public class ClientesDAO {
             em.getTransaction().begin();    //Inicia una transaccion que se aloja en el area de conexion
             em.merge(cliente);    //Actualiza el dato que corresponde a la id dada
             em.getTransaction().commit();   //Envia el dato a la bd
-
         } finally {
             if (em != null) {
                 em.close();
@@ -88,11 +86,7 @@ public class ClientesDAO {
                 boolean listadoRecibosVacio = listadoRecibos.isEmpty();     //Evalua si hay recibos referenciados al cliente
                 if (listadoRecibosVacio) {
                     System.out.println("El registro con id: " + idCliente + " sera eliminado.");
-                    //if (continuarOperacion()) {
                     em.remove(cliente);     //Si el listado esta vacios entonces elimina el cliente
-                    //} else {
-                    //    System.out.println("Operacion cancelada.");
-                    //}
                 } else {
                     System.out.println("Eliminar este cliente, eliminara los siguientes registros."
                             + " Si no esta de acuerdo, asigneles un nuevo cliente antes de continuar");
@@ -100,11 +94,7 @@ public class ClientesDAO {
                     for (int i = 0; i < listadoRecibos.size(); i++) {
                         System.out.println(listadoRecibos.toArray()[i]);
                     }
-                    //if (continuarOperacion()) {
                     em.remove(cliente);    //Elimina la bodega y las tiendas y departamentos bajo esta
-                    //} else {
-                    //    System.out.println("Proceso cancelado.");
-                    //}
                 }
                 em.getTransaction().commit();    //Envia el dato a la bd
             } else {
@@ -132,7 +122,7 @@ public class ClientesDAO {
         }
     }
 
-    public String mostrarListadoInfo(List<Object> listadoInfo) {
+    public String mostrarListadoInfo(List<Object> listadoInfo) {    //Metodo que obtiene el listado de cargos
         String mostrar = "";
         for (int i = 0; i < listadoInfo.size(); i++) {
             mostrar = mostrar.concat(listadoInfo.get(i) + "\n");
@@ -140,31 +130,7 @@ public class ClientesDAO {
         return mostrar;
     }
 
-    /*public int getClientesCount() { //Si se va a utilizar el metodo, descomentar el import de root
-        EntityManager em = getEntityManager();
-        try {
-            CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<Clientes> rt = cq.from(Clientes.class);
-            cq.select(em.getCriteriaBuilder().count(rt));
-            Query q = em.createQuery(cq);
-            return ((Long) q.getSingleResult()).intValue();
-        } finally {
-            em.close();
-        }
-    }*/
-    public boolean continuarOperacion() {
-        String opc;
-        boolean continuarPreguntando;
-        do {
-            System.out.println("¿Desea continuar? (Y/N)");
-            opc = entrada.next();
-            continuarPreguntando = !"Y".equals(opc) && !"y".equals(opc) && !"N".equals(opc) && !"n".equals(opc); //evalua si la opcion se digita correctamente
-        } while (continuarPreguntando);
-        boolean si = "Y".equals(opc) || "y".equals(opc);
-        return si;  //retorna el valor de la confirmacion
-    }
-
-    public Clientes obtenerCliente(Integer idCliente) {
+    public Clientes obtenerCliente(Integer idCliente) {     //Obtiene registro de un cliente por su id
         EntityManager em = null;
         Clientes cliente;
         try {
@@ -184,7 +150,7 @@ public class ClientesDAO {
         return cliente;
     }
 
-    public int buscarClienteCorreo(String correoCliente) {
+    public int buscarClienteCorreo(String correoCliente) {      //Busca un cliente por su correo mediante jpql
         Query q = getEntityManager().createNamedQuery("Clientes.findIdByCorreoClien");
         q.setParameter("correoClien", correoCliente);
         String[] quitandoCorchete1 = q.getResultList().toString().split("\\[");
@@ -192,7 +158,7 @@ public class ClientesDAO {
         return (quitandoCorchete2.length == 0) ? 0 : Integer.parseInt(quitandoCorchete2[0]);
     }
 
-    public int buscarClienteTel(String telefonoCliente) {
+    public int buscarClienteTel(String telefonoCliente) {       //Busca un cliente por su telefono mediante jpql
         Query q = getEntityManager().createNamedQuery("Clientes.findIdByTelClien");
         q.setParameter("telClien", telefonoCliente);
         String[] quitandoCorchete1 = q.getResultList().toString().split("\\[");
@@ -200,7 +166,7 @@ public class ClientesDAO {
         return (quitandoCorchete2.length == 0) ? 0 : Integer.parseInt(quitandoCorchete2[0]);
     }
 
-    public int buscarClienCorreoTel(String correoCliente, String telefonoCliente) {
+    public int buscarClienCorreoTel(String correoCliente, String telefonoCliente) {     //Busca un cliente por su correo y telefono mediante jpql
         Query q = getEntityManager().createNamedQuery("Clientes.findIdByCorreoTelClien");
         q.setParameter("correoClien", correoCliente);
         q.setParameter("telClien", telefonoCliente);
@@ -209,7 +175,7 @@ public class ClientesDAO {
         return (quitandoCorchete2.length == 0) ? 0 : Integer.parseInt(quitandoCorchete2[0]);
     }
 
-    public String obtenerClientePrNom(int idCliente) {
+    public String obtenerClientePrNom(int idCliente) {      //Obtiene el primer nombre de un cliente por su id
         String cliente = obtenerCliente(idCliente) + "";
         String[] idInfo = cliente.split(" : ");
         String[] clienteComponentes = idInfo[1].split(" , ");
@@ -217,42 +183,42 @@ public class ClientesDAO {
         return clientePrNom;
     }
 
-    public String obtenerClienteSdNom(int idCliente) {
+    public String obtenerClienteSdNom(int idCliente) {      //Obtiene el segundo nombre de un cliente por su id
         String cliente = obtenerCliente(idCliente) + "";
         String[] clienteComponentes = cliente.split(" , ");
         String clienteSdNom = clienteComponentes[1];
         return clienteSdNom;
     }
 
-    public String obtenerClientePrApell(int idCliente) {
+    public String obtenerClientePrApell(int idCliente) {        //Obtiene el primer apellido de un cliente por su id
         String cliente = obtenerCliente(idCliente) + "";
         String[] clienteComponentes = cliente.split(" , ");
         String clientePrApell = clienteComponentes[2];
         return clientePrApell;
     }
 
-    public String obtenerClienteSdApell(int idCliente) {
+    public String obtenerClienteSdApell(int idCliente) {        //Obtiene el segundo apellido de un cliente por su id
         String cliente = obtenerCliente(idCliente) + "";
         String[] clienteComponentes = cliente.split(" , ");
         String clienteSdApell = clienteComponentes[3];
         return clienteSdApell;
     }
 
-    public String obtenerClienteCorreo(int idCliente) {
+    public String obtenerClienteCorreo(int idCliente) {     //Obtiene el correo de un cliente por su id
         String cliente = obtenerCliente(idCliente) + "";
         String[] clienteComponentes = cliente.split(" , ");
         String clienteCorreo = clienteComponentes[4];
         return clienteCorreo;
     }
 
-    public String obtenerClienteTel(int idCliente) {
+    public String obtenerClienteTel(int idCliente) {        //Obtiene el telefono de un cliente por su id
         String cliente = obtenerCliente(idCliente) + "";
         String[] clienteComponentes = cliente.split(" , ");
         String clienteTel = clienteComponentes[5];
         return clienteTel;
     }
 
-    public String obtenerClienteDir(int idCliente) {
+    public String obtenerClienteDir(int idCliente) {        //Obtiene la direccion de un cliente por su id
         String cliente = obtenerCliente(idCliente) + "";
         String[] clienteComponentes = cliente.split(" , ");
         String clienteDir = clienteComponentes[6];

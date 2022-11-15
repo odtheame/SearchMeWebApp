@@ -44,7 +44,6 @@ public class RecibosDAO {
             em.getTransaction().begin();    //Inicia una transaccion que se aloja en el area de conexion
             em.persist(recibo);    //Persiste el dato en el objeto
             em.getTransaction().commit();   //Envia el dato a la bd
-
         } finally {
             if (em != null) {
                 em.close();
@@ -59,7 +58,6 @@ public class RecibosDAO {
             em.getTransaction().begin();    //Inicia una transaccion que se aloja en el area de conexion
             em.merge(recibo);    //Actualiza el dato que corresponde a la id dada
             em.getTransaction().commit();   //Envia el dato a la bd
-
         } finally {
             if (em != null) {
                 em.close();
@@ -84,11 +82,7 @@ public class RecibosDAO {
             }
             if (existeRecibo) {
                 System.out.println("El registro con id: " + idRecibo + " sera eliminado.");
-                //if (continuarOperacion()) {
                 em.remove(recibo);     //Si esta vacio entonces elimina el listado
-                //} else {
-                //    System.out.println("Operacion cancelada.");
-                //}
                 em.getTransaction().commit();    //Envia el dato a la bd
 
             } else {
@@ -118,39 +112,7 @@ public class RecibosDAO {
         }
     }
 
-    public String mostrarListadoInfo(List<Object> listadoInfo) {
-        String mostrar = "";
-        for (int i = 0; i < listadoInfo.size(); i++) {
-            mostrar = mostrar.concat(listadoInfo.get(i) + "\n");
-        }
-        return mostrar;
-    }
-
-    /*public int getRecibosCount() { //Si se va a utilizar el metodo, descomentar el import de root
-        EntityManager em = getEntityManager();
-        try {
-            CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<Recibos> rt = cq.from(Recibos.class);
-            cq.select(em.getCriteriaBuilder().count(rt));
-            Query q = em.createQuery(cq);
-            return ((Long) q.getSingleResult()).intValue();
-        } finally {
-            em.close();
-        }
-    }*/
-    public boolean continuarOperacion() {
-        String opc;
-        boolean continuarPreguntando;
-        do {
-            System.out.println("¿Desea continuar? (Y/N)");
-            opc = entrada.next();
-            continuarPreguntando = !"Y".equals(opc) && !"y".equals(opc) && !"N".equals(opc) && !"n".equals(opc); //evalua si la opcion se digita correctamente
-        } while (continuarPreguntando);
-        boolean si = "Y".equals(opc) || "y".equals(opc);
-        return si;  //retorna el valor de la confirmacion
-    }
-
-    public Recibos obtenerRecibo(Integer idRecibo) {
+    public Recibos obtenerRecibo(Integer idRecibo) {    //Obtiene registro de un recibo por su id
         EntityManager em = null;
         Recibos recibo;
         try {
@@ -172,15 +134,15 @@ public class RecibosDAO {
         return recibo;
     }
 
-    public int buscarReciboNum(String reciboNum) {
+    public int buscarReciboNum(String reciboNum) {      //Busca un recibo por su numero mediante jpql
         Query q = getEntityManager().createNamedQuery("Recibos.findIdByNumRecibo");
         q.setParameter("numRecibo", Integer.parseInt(reciboNum));
-        String [] quitandoCorchete1 = q.getResultList().toString().split("\\[");
-        String [] quitandoCorchete2 = quitandoCorchete1[1].split("\\]");
-        return (quitandoCorchete2.length==0)?0:Integer.parseInt(quitandoCorchete2[0]);
+        String[] quitandoCorchete1 = q.getResultList().toString().split("\\[");
+        String[] quitandoCorchete2 = quitandoCorchete1[1].split("\\]");
+        return (quitandoCorchete2.length == 0) ? 0 : Integer.parseInt(quitandoCorchete2[0]);
     }
 
-    public String obtenerReciboNum(int idRecibo) {
+    public String obtenerReciboNum(int idRecibo) {      //Obtiene el numero de un recibo por su id
         String recibo = obtenerRecibo(idRecibo) + "";
         String[] reciboComponentes = recibo.split(" , ");
         String[] reciboInfo = reciboComponentes[0].split(" : ");
@@ -189,21 +151,21 @@ public class RecibosDAO {
         return reciboNum;
     }
 
-    public String obtenerReciboFecha(int idRecibo) {
+    public String obtenerReciboFecha(int idRecibo) {    //Obtiene la fecha de un recibo por su id
         String recibo = obtenerRecibo(idRecibo) + "";
         String[] reciboComponentes = recibo.split(" , ");
         String reciboFecha = reciboComponentes[1];
         return reciboFecha;
     }
 
-    public String obtenerReciboValor(int idRecibo) {
+    public String obtenerReciboValor(int idRecibo) {    //Obtiene el valor total de un recibo por su id
         String recibo = obtenerRecibo(idRecibo) + "";
         String[] reciboComponentes = recibo.split(" , ");
         String reciboValor = reciboComponentes[2];
         return reciboValor;
     }
 
-    public String obtenerReciboIdTienda(int idRecibo) {
+    public String obtenerReciboIdTienda(int idRecibo) {     //Obtiene la id de tienda asociada a un recibo por su id
         String recibo = obtenerRecibo(idRecibo) + "";
         String[] reciboComponentes = recibo.split(" , ");
         String[] reciboInfo = reciboComponentes[3].split("\\[");
@@ -212,7 +174,7 @@ public class RecibosDAO {
         return reciboIdTienda;
     }
 
-    public String obtenerReciboIdCliente(int idRecibo) {
+    public String obtenerReciboIdCliente(int idRecibo) {    //Obtiene la id de cliente asociada a un recibo por su id
         String recibo = obtenerRecibo(idRecibo) + "";
         String[] reciboComponentes = recibo.split(" , ");
         String[] reciboInfo = reciboComponentes[6].split("\\[");
@@ -221,25 +183,15 @@ public class RecibosDAO {
         return reciboIdCliente;
     }
 
-    public boolean tiendaExiste(String idTienda) {
+    public boolean tiendaExiste(String idTienda) {  //Confirma que la tienda que se va a asociar existe
         TiendasDAO tDao = new TiendasDAO();
-        String[] tiendas = tDao.mostrarListadoInfo(tDao.findAll()).split("\\[");
-        List<String> idTiendas = new ArrayList();
-        for (int i = 1; i <= tDao.findAll().size(); i++) {
-            String[] tiendasId = tiendas[i].split("\\] :");
-            idTiendas.add(tiendasId[0]);
-        }
-        return idTiendas.contains(idTienda);
+        return (tDao.obtenerTienda(Integer.parseInt(idTienda)) == null);
+
     }
 
-    public boolean clienteExiste(String idCliente) {
+    public boolean clienteExiste(String idCliente) {    //Confirma que el cliente que se va a asociar existe
         ClientesDAO cDao = new ClientesDAO();
-        String[] clientes = cDao.mostrarListadoInfo(cDao.findAll()).split("\\[");
-        List<String> idClientes = new ArrayList();
-        for (int i = 1; i <= cDao.findAll().size(); i++) {
-            String[] clientesId = clientes[i].split("\\] :");
-            idClientes.add(clientesId[0]);
-        }
-        return idClientes.contains(idCliente);
+        return (cDao.obtenerCliente(Integer.parseInt(idCliente)) == null);
+
     }
 }

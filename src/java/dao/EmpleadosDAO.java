@@ -10,7 +10,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import java.util.List;
 import java.util.Scanner;
 import model.Empleados;
-//import javax.persistence.criteria.Root;
 
 /**
  *
@@ -45,7 +44,6 @@ public class EmpleadosDAO {
             em.getTransaction().begin();    //Inicia una transaccion que se aloja en el area de conexion
             em.persist(empleado);    //Persiste el dato en el objeto
             em.getTransaction().commit();   //Envia el dato a la bd
-
         } finally {
             if (em != null) {
                 em.close();
@@ -60,7 +58,6 @@ public class EmpleadosDAO {
             em.getTransaction().begin();    //Inicia una transaccion que se aloja en el area de conexion
             em.merge(empleado);    //Actualiza el dato que corresponde a la id dada
             em.getTransaction().commit();   //Envia el dato a la bd
-
         } finally {
             if (em != null) {
                 em.close();
@@ -85,11 +82,7 @@ public class EmpleadosDAO {
             }
             if (existeEmpleado) {
                 System.out.println("El registro con id: " + idEmpleado + " sera eliminado.");
-                //if (continuarOperacion()) {
                 em.remove(empleado);     //Elimina el empleado
-                //} else {
-                //    System.out.println("Operacion cancelada.");
-                //}
                 em.getTransaction().commit();    //Envia el dato a la bd
             } else {
                 em.getTransaction().rollback(); //Cierra la transaccion sin subir nada
@@ -116,39 +109,7 @@ public class EmpleadosDAO {
         }
     }
 
-    public String mostrarListadoInfo(List<Object> listadoInfo) {
-        String mostrar = "";
-        for (int i = 0; i < listadoInfo.size(); i++) {
-            mostrar = mostrar.concat(listadoInfo.get(i) + "\n");  //Concatena los registros en un string y lo imprime
-        }
-        return mostrar;
-    }
-
-    /*public int getEmpleadosCount() { //Si se va a utilizar el metodo, descomentar el import de root
-        EntityManager em = getEntityManager();
-        try {
-            CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<Empleados> rt = cq.from(Empleados.class);
-            cq.select(em.getCriteriaBuilder().count(rt));
-            Query q = em.createQuery(cq);
-            return ((Long) q.getSingleResult()).intValue();
-        } finally {
-            em.close();
-        }
-    }*/
-    public boolean continuarOperacion() {
-        String opc;
-        boolean continuarPreguntando;
-        do {
-            System.out.println("¿Desea continuar? (Y/N)");
-            opc = entrada.next();
-            continuarPreguntando = !"Y".equals(opc) && !"y".equals(opc) && !"N".equals(opc) && !"n".equals(opc); //evalua si la opcion se digita correctamente
-        } while (continuarPreguntando);
-        boolean si = "Y".equals(opc) || "y".equals(opc);
-        return si;  //retorna el valor de la confirmacion
-    }
-
-    public Empleados obtenerEmpleado(Integer idEmpleado) {
+    public Empleados obtenerEmpleado(Integer idEmpleado) {      //Obtiene registro de un empleado por su id
         EntityManager em = null;
         Empleados empleado;
         try {
@@ -168,7 +129,7 @@ public class EmpleadosDAO {
         return empleado;
     }
 
-    public int buscarEmpleadoCorreo(String correoEmpleado) {
+    public int buscarEmpleadoCorreo(String correoEmpleado) {    //Busca un empleado por su correo mediante jpql
         Query q = getEntityManager().createNamedQuery("Empleados.findIdByCorreoEmpl");
         q.setParameter("correoEmpl", correoEmpleado);
         String[] quitandoCorchete1 = q.getResultList().toString().split("\\[");
@@ -176,7 +137,7 @@ public class EmpleadosDAO {
         return (quitandoCorchete2.length == 0) ? 0 : Integer.parseInt(quitandoCorchete2[0]);
     }
 
-    public int buscarEmpleadoTel(String telefonoEmpleado) {
+    public int buscarEmpleadoTel(String telefonoEmpleado) {     //Busca un empleado por su telefono mediante jpql
         Query q = getEntityManager().createNamedQuery("Empleados.findIdByTelEmpl");
         q.setParameter("telEmpl", telefonoEmpleado);
         String[] quitandoCorchete1 = q.getResultList().toString().split("\\[");
@@ -184,7 +145,7 @@ public class EmpleadosDAO {
         return (quitandoCorchete2.length == 0) ? 0 : Integer.parseInt(quitandoCorchete2[0]);
     }
 
-    public int buscarEmplCorreoTel(String correoEmpleado, String telefonoEmpleado) {
+    public int buscarEmplCorreoTel(String correoEmpleado, String telefonoEmpleado) {    //Busca un empleado por su correo y telefono mediante jpql
         Query q = getEntityManager().createNamedQuery("Empleados.findIdByCorreoTelEmpl");
         q.setParameter("correoEmpl", correoEmpleado);
         q.setParameter("telEmpl", telefonoEmpleado);
@@ -193,7 +154,7 @@ public class EmpleadosDAO {
         return (quitandoCorchete2.length == 0) ? 0 : Integer.parseInt(quitandoCorchete2[0]);
     }
 
-    public String obtenerEmpleadoPrNom(int idEmpleado) {
+    public String obtenerEmpleadoPrNom(int idEmpleado) {    //Obtiene el primer nombre de un empleado por su id
         String empleado = obtenerEmpleado(idEmpleado) + "";
         String[] idInfo = empleado.split(" : ");
         String[] empleadoComponentes = idInfo[1].split(" , ");
@@ -201,70 +162,70 @@ public class EmpleadosDAO {
         return empleadoPrNom;
     }
 
-    public String obtenerEmpleadoSdNom(int idEmpleado) {
+    public String obtenerEmpleadoSdNom(int idEmpleado) {    //Obtiene el segundo nombre de un empleado por su id
         String empleado = obtenerEmpleado(idEmpleado) + "";
         String[] empleadoComponentes = empleado.split(" , ");
         String empleadoSdNom = empleadoComponentes[1];
         return empleadoSdNom;
     }
 
-    public String obtenerEmpleadoPrApell(int idEmpleado) {
+    public String obtenerEmpleadoPrApell(int idEmpleado) {      //Obtiene el primer apellido de un empleado por su id
         String empleado = obtenerEmpleado(idEmpleado) + "";
         String[] empleadoComponentes = empleado.split(" , ");
         String empleadoPrApell = empleadoComponentes[2];
         return empleadoPrApell;
     }
 
-    public String obtenerEmpleadoSdApell(int idEmpleado) {
+    public String obtenerEmpleadoSdApell(int idEmpleado) {      //Obtiene el segundo apellido de un empleado por su id
         String empleado = obtenerEmpleado(idEmpleado) + "";
         String[] empleadoComponentes = empleado.split(" , ");
         String empleadoSdApell = empleadoComponentes[3];
         return empleadoSdApell;
     }
 
-    public String obtenerEmpleadoDir(int idEmpleado) {
+    public String obtenerEmpleadoDir(int idEmpleado) {      //Obtiene la direccion de un empleado por su id
         String empleado = obtenerEmpleado(idEmpleado) + "";
         String[] empleadoComponentes = empleado.split(" , ");
         String empleadoDir = empleadoComponentes[4];
         return empleadoDir;
     }
 
-    public String obtenerEmpleadoTel(int idEmpleado) {
+    public String obtenerEmpleadoTel(int idEmpleado) {      //Obtiene el telefono de un empleado por su id
         String empleado = obtenerEmpleado(idEmpleado) + "";
         String[] empleadoComponentes = empleado.split(" , ");
         String empleadoTel = empleadoComponentes[5];
         return empleadoTel;
     }
 
-    public String obtenerEmpleadoCorreo(int idEmpleado) {
+    public String obtenerEmpleadoCorreo(int idEmpleado) {       //Obtiene el correo de un empleado por su id
         String empleado = obtenerEmpleado(idEmpleado) + "";
         String[] empleadoComponentes = empleado.split(" , ");
         String empleadoCorreo = empleadoComponentes[6];
         return empleadoCorreo;
     }
 
-    public String obtenerEmpleadoFechaNaci(int idEmpleado) {
+    public String obtenerEmpleadoFechaNaci(int idEmpleado) {        //Obtiene la fecha de nacimiento de un empleado por su id
         String empleado = obtenerEmpleado(idEmpleado) + "";
         String[] empleadoComponentes = empleado.split(" , ");
         String empleadoFechaNaci = empleadoComponentes[7];
         return empleadoFechaNaci;
     }
 
-    public String obtenerEmpleadoCiudad(int idEmpleado) {
+    public String obtenerEmpleadoCiudad(int idEmpleado) {       //Obtiene la ciudad de un empleado por su id
         String empleado = obtenerEmpleado(idEmpleado) + "";
         String[] empleadoComponentes = empleado.split(" , ");
         String empleadoCiudad = empleadoComponentes[8];
         return empleadoCiudad;
     }
 
-    public String obtenerEmpleadoPais(int idEmpleado) {
+    public String obtenerEmpleadoPais(int idEmpleado) {     //Obtiene el pais de un empleado por su id
         String empleado = obtenerEmpleado(idEmpleado) + "";
         String[] empleadoComponentes = empleado.split(" , ");
         String empleadoPais = empleadoComponentes[9];
         return empleadoPais;
     }
 
-    public String obtenerEmpleadoIdCargo(int idEmpleado) {
+    public String obtenerEmpleadoIdCargo(int idEmpleado) {      //Obtiene el id del cargo asociado de un empleado por su id
         String empleado = obtenerEmpleado(idEmpleado) + "";
         String[] empleadoComponentes = empleado.split(" , ");
         String[] empleadoCargo = empleadoComponentes[10].split("\\[");
@@ -273,7 +234,7 @@ public class EmpleadosDAO {
         return empleadoIdCargo;
     }
 
-    public String obtenerEmpleadoIdDept(int idEmpleado) {
+    public String obtenerEmpleadoIdDept(int idEmpleado) {       //Obtiene el id del departamento asociado de un empleado por su id
         String empleado = obtenerEmpleado(idEmpleado) + "";
         String[] empleadoComponentes = empleado.split(" , ");
         String[] empleadoCargo = empleadoComponentes[10].split("\\[");
@@ -282,25 +243,13 @@ public class EmpleadosDAO {
         return empleadoIdDepto;
     }
 
-    public boolean departamentoExiste(String idDept) {
+    public boolean departamentoExiste(String idDept) {      //Confirma que el departamento que se va a asociar existe
         DepartamentosDAO dDao = new DepartamentosDAO();
-        String[] depts = dDao.mostrarListadoInfo(dDao.findAll()).split("\\[");
-        List<String> idDepts = new ArrayList();
-        for (int i = 1; i <= dDao.findAll().size(); i++) {
-            String[] deptsId = depts[i].split("\\] :");
-            idDepts.add(deptsId[0]);
-        }
-        return idDepts.contains(idDept);
+        return (dDao.obtenerDepartamento(Integer.parseInt(idDept)) == null);
     }
 
-    public boolean cargoExiste(String idCargo) {
+    public boolean cargoExiste(String idCargo) {    //Confirma que el cargo que se va a asociar existe
         CargosDAO cDao = new CargosDAO();
-        String[] cargos = cDao.mostrarListadoInfo(cDao.findAll()).split("\\[");
-        List<String> idCargos = new ArrayList();
-        for (int i = 1; i <= cDao.findAll().size(); i++) {
-            String[] cargosId = cargos[i].split("\\] :");
-            idCargos.add(cargosId[0]);
-        }
-        return idCargos.contains(idCargo);
+        return (cDao.obtenerCargo(Integer.parseInt(idCargo)) == null);
     }
 }

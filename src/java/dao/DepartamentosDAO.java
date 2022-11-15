@@ -46,7 +46,6 @@ public class DepartamentosDAO {
             em.getTransaction().begin();    //Inicia una transaccion que se aloja en el area de conexion
             em.persist(departamento);    //Persiste el dato en el objeto
             em.getTransaction().commit();   //Envia el dato a la bd
-
         } finally {
             if (em != null) {
                 em.close();
@@ -61,7 +60,6 @@ public class DepartamentosDAO {
             em.getTransaction().begin();    //Inicia una transaccion que se aloja en el area de conexion
             em.merge(departamento);    //Actualiza el dato que corresponde a la id dada
             em.getTransaction().commit();   //Envia el dato a la bd
-
         } finally {
             if (em != null) {
                 em.close();
@@ -89,11 +87,7 @@ public class DepartamentosDAO {
                 boolean listadoEmpleadosVacio = listadoEmpleados.isEmpty();     //Evalua si hay empleados referenciados al departamento
                 if (listadoEmpleadosVacio) {
                     System.out.println("El registro con id: " + idDepartamento + " sera eliminado.");
-                    //if (continuarOperacion()) {
                     em.remove(departamento);     //Si estae vacio entonces elimina el departamento
-                    //} else {
-                    //    System.out.println("Operacion cancelada.");
-                    //}
                 } else {
                     System.out.println("Eliminar este departamento, eliminara los siguientes registros."
                             + " Si no esta de acuerdo, asigneles un nuevo departamento antes de continuar");
@@ -101,11 +95,7 @@ public class DepartamentosDAO {
                     for (int i = 0; i < listadoEmpleados.size(); i++) {
                         System.out.println(listadoEmpleados.toArray()[i]);
                     }
-                    //if (continuarOperacion()) {
                     em.remove(departamento);    //Elimina el departamentos y los empleados bajo este
-                    //} else {
-                    //    System.out.println("Proceso cancelado.");
-                    //}
                 }
                 em.getTransaction().commit();    //Envia el dato a la bd
             } else {
@@ -133,39 +123,7 @@ public class DepartamentosDAO {
         }
     }
 
-    public String mostrarListadoInfo(List<Object> listadoInfo) {
-        String mostrar = "";
-        for (int i = 0; i < listadoInfo.size(); i++) {
-            mostrar = mostrar.concat(listadoInfo.get(i) + "\n");  //Concatena los registros en un string y lo imprime
-        }
-        return mostrar;
-    }
-
-    /*public int getBodegasCount() { //Si se va a utilizar el metodo, descomentar el import de root
-        EntityManager em = getEntityManager();
-        try {
-            CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<Departamentos> rt = cq.from(Departamentos.class);
-            cq.select(em.getCriteriaBuilder().count(rt));
-            Query q = em.createQuery(cq);
-            return ((Long) q.getSingleResult()).intValue();
-        } finally {
-            em.close();
-        }
-    }*/
-    public boolean continuarOperacion() {
-        String opc;
-        boolean continuarPreguntando;
-        do {
-            System.out.println("¿Desea continuar? (Y/N)");
-            opc = entrada.next();
-            continuarPreguntando = !"Y".equals(opc) && !"y".equals(opc) && !"N".equals(opc) && !"n".equals(opc); //evalua si la opcion se digita correctamente
-        } while (continuarPreguntando);
-        boolean si = "Y".equals(opc) || "y".equals(opc);
-        return si;  //retorna el valor de la confirmacion
-    }
-
-    public Departamentos obtenerDepartamento(Integer idDept) {
+    public Departamentos obtenerDepartamento(Integer idDept) {      //Obtiene registro de un departamento por su id
         EntityManager em = null;
         Departamentos departamento;
         try {
@@ -185,15 +143,15 @@ public class DepartamentosDAO {
         return departamento;
     }
 
-    public int buscarDepartamentoNom(String nombreDepartamento) {
+    public int buscarDepartamentoNom(String nombreDepartamento) {       //Busca un departamento por su nombre mediante jpql
         Query q = getEntityManager().createNamedQuery("Departamentos.findIdByNomDept");
         q.setParameter("nomDept", nombreDepartamento);
-        String [] quitandoCorchete1 = q.getResultList().toString().split("\\[");
-        String [] quitandoCorchete2 = quitandoCorchete1[1].split("\\]");
-        return (quitandoCorchete2.length==0)?0:Integer.parseInt(quitandoCorchete2[0]);
-        }
+        String[] quitandoCorchete1 = q.getResultList().toString().split("\\[");
+        String[] quitandoCorchete2 = quitandoCorchete1[1].split("\\]");
+        return (quitandoCorchete2.length == 0) ? 0 : Integer.parseInt(quitandoCorchete2[0]);
+    }
 
-    public String obtenerDepartamentoNom(int idDepartamento) {
+    public String obtenerDepartamentoNom(int idDepartamento) {      //Obtiene el nombre de un departamento por su id
         String departamento = obtenerDepartamento(idDepartamento) + "";
         String[] departamentoComponentes = departamento.split(" , ");
         String[] departamentoInfo = departamentoComponentes[0].split(" : ");
@@ -201,14 +159,14 @@ public class DepartamentosDAO {
         return departamentoNom;
     }
 
-    public String obtenerDepartamentoDir(int idDepartamento) {
+    public String obtenerDepartamentoDir(int idDepartamento) {      //Obtiene la direccion de un departamento por su id
         String departamento = obtenerDepartamento(idDepartamento) + "";
         String[] departamentoComponentes = departamento.split(" , ");
         String departamentoDir = departamentoComponentes[1];
         return departamentoDir;
     }
 
-    public String obtenerDepartamentoIdBodega(int idDepartamento) {
+    public String obtenerDepartamentoIdBodega(int idDepartamento) {     //Obtiene la id de bodega asociada a un departamento por su id
         String departamento = obtenerDepartamento(idDepartamento) + "";
         String[] departamentoComponentes = departamento.split(" , ");
         String[] departamentoBodega = departamentoComponentes[2].split("\\[");
@@ -217,14 +175,8 @@ public class DepartamentosDAO {
         return departamentoIdBodega;
     }
 
-    public boolean bodegaExiste(String idBodega) {
+    public boolean bodegaExiste(String idBodega) {      //Confirma que la bodega que se va a asociar existe
         BodegasDAO bDao = new BodegasDAO();
-        String[] bodegas = bDao.mostrarListadoInfo(bDao.findAll()).split("\\[");
-        List<String> idBodegas = new ArrayList();
-        for (int i = 1; i <= bDao.findAll().size(); i++) {
-            String[] bodegasId = bodegas[i].split("\\] :");
-            idBodegas.add(bodegasId[0]);
-        }
-        return idBodegas.contains(idBodega);
+        return (bDao.obtenerBodega(Integer.parseInt(idBodega)) == null);
     }
 }

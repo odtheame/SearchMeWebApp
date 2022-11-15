@@ -7,7 +7,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 import model.Cargos;
 import model.Departamentos;
 
-@Generated(value="EclipseLink-2.7.9.v20210604-rNA", date="2022-11-10T19:40:04")
+@Generated(value="EclipseLink-2.7.9.v20210604-rNA", date="2022-11-14T20:12:41")
 @StaticMetamodel(Empleados.class)
 public class Empleados_ { 
 

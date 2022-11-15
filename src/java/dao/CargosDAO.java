@@ -45,7 +45,6 @@ public class CargosDAO {
             em.getTransaction().begin();    //Inicia una transaccion que se aloja en el area de conexion
             em.persist(cargo);    //Persiste el dato en el objeto
             em.getTransaction().commit();   //Envia el dato a la bd
-
         } finally {
             if (em != null) {
                 em.close();
@@ -60,7 +59,6 @@ public class CargosDAO {
             em.getTransaction().begin();    //Inicia una transaccion que se aloja en el area de conexion
             em.merge(cargo);    //Actualiza el dato que corresponde a la id dada
             em.getTransaction().commit();   //Envia el dato a la bd
-
         } finally {
             if (em != null) {
                 em.close();
@@ -88,11 +86,7 @@ public class CargosDAO {
                 boolean listadoEmpleadosVacio = listadoEmpleados.isEmpty();     //Evalua si hay empleados referenciados al cargo
                 if (listadoEmpleadosVacio) {
                     System.out.println("El registro con id: " + idCargo + " sera eliminado.");
-                    //if (continuarOperacion()) {
-                        em.remove(cargo);     //Si esta vacio entonces elimina el cargo
-                    //} else {
-                    //    System.out.println("Operacion cancelada.");
-                    //}
+                    em.remove(cargo);     //Si esta vacio entonces elimina el cargo
                 } else {
                     System.out.println("Eliminar esta cargo, eliminara los siguientes registros."
                             + " Si no esta de acuerdo, asigneles un nuevo cargo antes de continuar");
@@ -100,11 +94,7 @@ public class CargosDAO {
                     for (int i = 0; i < listadoEmpleados.size(); i++) {
                         System.out.println(listadoEmpleados.toArray()[i]);
                     }
-                    //if (continuarOperacion()) {
-                        em.remove(cargo);    //Elimina el cargo y los empleados bajo esta
-                    //} else {
-                    //    System.out.println("Proceso cancelado.");
-                    //}
+                    em.remove(cargo);    //Elimina el cargo y los empleados bajo esta
                 }
                 em.getTransaction().commit();    //Envia el dato a la bd
             } else {
@@ -132,39 +122,7 @@ public class CargosDAO {
         }
     }
 
-    public String mostrarListadoInfo(List<Object> listadoInfo) {
-        String mostrar = "";
-        for (int i = 0; i < listadoInfo.size(); i++) {
-            mostrar = mostrar.concat(listadoInfo.get(i) + "\n");
-        }
-        return mostrar;
-    }
-
-    /*public int getCargosCount() { //Si se va a utilizar el metodo, descomentar el import de root
-        EntityManager em = getEntityManager();
-        try {
-            CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<Cargos> rt = cq.from(Cargos.class);
-            cq.select(em.getCriteriaBuilder().count(rt));
-            Query q = em.createQuery(cq);
-            return ((Long) q.getSingleResult()).intValue();
-        } finally {
-            em.close();
-        }
-    }*/
-    public boolean continuarOperacion() {
-        String opc;
-        boolean continuarPreguntando;
-        do {
-            System.out.println("¿Desea continuar? (Y/N)");
-            opc = entrada.next();
-            continuarPreguntando = !"Y".equals(opc) && !"y".equals(opc) && !"N".equals(opc) && !"n".equals(opc); //evalua si la opcion se digita correctamente
-        } while (continuarPreguntando);
-        boolean si = "Y".equals(opc) || "y".equals(opc);
-        return si;  //retorna el valor de la confirmacion
-    }
-
-    public Cargos obtenerCargo(Integer idCargo) {
+    public Cargos obtenerCargo(Integer idCargo) {     //Obtiene registro de un cargo por su id
         EntityManager em = null;
         Cargos cargo;
         try {
@@ -183,27 +141,31 @@ public class CargosDAO {
         }
         return cargo;
     }
-    public int buscarCargoNom(String nombreCargo) {
+
+    public int buscarCargoNom(String nombreCargo) {     //Busca un cargo por su nombre mediante jpql
         Query q = getEntityManager().createNamedQuery("Cargos.findIdByNomCargo");
         q.setParameter("nomCargo", nombreCargo);
-        String [] quitandoCorchete1 = q.getResultList().toString().split("\\[");
-        String [] quitandoCorchete2 = quitandoCorchete1[1].split("\\]");
-        return (quitandoCorchete2.length==0)?0:Integer.parseInt(quitandoCorchete2[0]);
+        String[] quitandoCorchete1 = q.getResultList().toString().split("\\[");
+        String[] quitandoCorchete2 = quitandoCorchete1[1].split("\\]");
+        return (quitandoCorchete2.length == 0) ? 0 : Integer.parseInt(quitandoCorchete2[0]);
     }
-    public String obtenerCargoNom(int idCargo) {
+
+    public String obtenerCargoNom(int idCargo) {    //Obtiene el nombre de un cargo por su id
         String cargo = obtenerCargo(idCargo) + "";
         String[] cargoComponentes = cargo.split(" , ");
         String[] cargoInfo = cargoComponentes[0].split(" : ");
         String cargoNom = cargoInfo[1];
         return cargoNom;
     }
-    public String obtenerCargoDesc(int idCargo) {
+
+    public String obtenerCargoDesc(int idCargo) {   //Obtiene la descripcion de un cargo por su id
         String cargo = obtenerCargo(idCargo) + "";
         String[] cargoComponentes = cargo.split(" , ");
         String cargoDesc = cargoComponentes[1];
         return cargoDesc;
     }
-    public String obtenerCargoSala(int idCargo) {
+
+    public String obtenerCargoSala(int idCargo) {   //Obtiene el salario de un cargo por su id
         String cargo = obtenerCargo(idCargo) + "";
         String[] cargoComponentes = cargo.split(" , ");
         String cargoSala = cargoComponentes[2];

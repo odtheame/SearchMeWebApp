@@ -46,7 +46,6 @@ public class BodegasDAO {
             em.getTransaction().begin();    //Inicia una transaccion que se aloja en el area de conexion
             em.persist(bodega);    //Persiste el dato en el objeto
             em.getTransaction().commit();   //Envia el dato a la bd
-
         } finally {
             if (em != null) {
                 em.close();
@@ -61,7 +60,6 @@ public class BodegasDAO {
             em.getTransaction().begin();    //Inicia una transaccion que se aloja en el area de conexion
             em.merge(bodega);    //Actualiza el dato que corresponde a la id dada
             em.getTransaction().commit();   //Envia el dato a la bd
-
         } finally {
             if (em != null) {
                 em.close();
@@ -91,11 +89,7 @@ public class BodegasDAO {
                 boolean listadoDepartamentosVacio = listadoDepartamentos.isEmpty();     //Evalua si hay departamentos referenciados a la bodega
                 if (listadoTiendasVacio && listadoDepartamentosVacio) {
                     System.out.println("El registro con id: " + idBodega + " sera eliminado.");
-                    //if (continuarOperacion()) {
                     em.remove(bodega);     //Si ambos estan vacios entonces elimina la bodega
-                    //} else {
-                    //System.out.println("Operacion cancelada.");
-                    //}
                 } else {
                     System.out.println("Eliminar esta bodega, eliminara los siguientes registros."
                             + " Si no esta de acuerdo, asigneles una nueva bodega antes de continuar");
@@ -111,11 +105,7 @@ public class BodegasDAO {
                             System.out.println(listadoDepartamentos.toArray()[i]);
                         }
                     }
-                    // if (continuarOperacion()) {
                     em.remove(bodega);    //Elimina la bodega y las tiendas y departamentos bajo esta
-                    //} else {
-                    //     System.out.println("Proceso cancelado.");
-                    // }
                 }
                 em.getTransaction().commit();    //Envia el dato a la bd
             } else {
@@ -143,40 +133,7 @@ public class BodegasDAO {
         }
     }
 
-    public String mostrarListadoInfo(List<Object> listadoInfo) {
-        String mostrar = "";
-        for (int i = 0; i < listadoInfo.size(); i++) {
-            mostrar = mostrar.concat(listadoInfo.get(i) + "\n");
-        }
-        return mostrar;
-    }
-
-    /*public int getBodegasCount() { //Si se va a utilizar el metodo, descomentar el import de root
-        EntityManager em = getEntityManager();
-        try {
-            CriteriaQuery cq = em.getCriteriaBuilder().createQuery();
-            Root<Bodegas> rt = cq.from(Bodegas.class);
-            cq.select(em.getCriteriaBuilder().count(rt));
-            Query q = em.createQuery(cq);
-            //System.out.println(((Long) q.getSingleResult()).intValue());
-            return ((Long) q.getSingleResult()).intValue();
-        } finally {
-            em.close();
-        }
-    }*/
-    public boolean continuarOperacion() {
-        String opc;
-        boolean continuarPreguntando;
-        do {
-            System.out.println("¿Desea continuar? (Y/N)");
-            opc = entrada.next();
-            continuarPreguntando = !"Y".equals(opc) && !"y".equals(opc) && !"N".equals(opc) && !"n".equals(opc); //evalua si la opcion se digita correctamente
-        } while (continuarPreguntando);
-        boolean si = "Y".equals(opc) || "y".equals(opc);
-        return si;  //retorna el valor de la confirmacion
-    }
-
-    public Bodegas obtenerBodega(Integer idBodega) {
+    public Bodegas obtenerBodega(Integer idBodega) {    //Obtiene registro de una bodega por su id
         EntityManager em = null;
         Bodegas bodega;
         try {
@@ -196,7 +153,7 @@ public class BodegasDAO {
         return bodega;
     }
 
-    public int buscarBodegaNom(String nombreBodega) {
+    public int buscarBodegaNom(String nombreBodega) {   //Busca una bodega por su nombre mediante jpql
         Query q = getEntityManager().createNamedQuery("Bodegas.findIdByNomBodega");
         q.setParameter("nomBodega", nombreBodega);
         String[] quitandoCorchete1 = q.getResultList().toString().split("\\[");
@@ -204,7 +161,7 @@ public class BodegasDAO {
         return (quitandoCorchete2.length == 0) ? 0 : Integer.parseInt(quitandoCorchete2[0]);
     }
 
-    public int buscarBodegaTel(String telefonoBodega) {
+    public int buscarBodegaTel(String telefonoBodega) {     //Busca una bodega por su telefono mediante jpql
         Query q = getEntityManager().createNamedQuery("Bodegas.findIdByTelBodega");
         q.setParameter("telBodega", telefonoBodega);
         String[] quitandoCorchete1 = q.getResultList().toString().split("\\[");
@@ -212,7 +169,7 @@ public class BodegasDAO {
         return (quitandoCorchete2.length == 0) ? 0 : Integer.parseInt(quitandoCorchete2[0]);
     }
 
-    public int buscarBodegaNomTel(String nombreBodega, String telefonoBodega) {
+    public int buscarBodegaNomTel(String nombreBodega, String telefonoBodega) {     //Busca una bodega por su nombre y telefono mediante jpql
         Query q = getEntityManager().createNamedQuery("Bodegas.findIdByNomTelBodega");
         q.setParameter("nomBodega", nombreBodega);
         q.setParameter("telBodega", telefonoBodega);
@@ -221,7 +178,7 @@ public class BodegasDAO {
         return (quitandoCorchete2.length == 0) ? 0 : Integer.parseInt(quitandoCorchete2[0]);
     }
 
-    public String obtenerBodegaNom(int idBodega) {
+    public String obtenerBodegaNom(int idBodega) {      //Obtiene el nombre de una bodega por su id
         String bodega = obtenerBodega(idBodega) + "";
         String[] bodegaComponentes = bodega.split(" , ");
         String[] bodegaInfo = bodegaComponentes[0].split(" : ");
@@ -229,14 +186,14 @@ public class BodegasDAO {
         return bodegaNom;
     }
 
-    public String obtenerBodegaDir(int idBodega) {
+    public String obtenerBodegaDir(int idBodega) {      //Obtiene el direccion de una bodega por su id
         String bodega = obtenerBodega(idBodega) + "";
         String[] bodegaComponentes = bodega.split(" , ");
         String bodegaDir = bodegaComponentes[1];
         return bodegaDir;
     }
 
-    public String obtenerBodegaTel(int idBodega) {
+    public String obtenerBodegaTel(int idBodega) {      //Obtiene el telefono de una bodega por su id
         String bodega = obtenerBodega(idBodega) + "";
         String[] bodegaComponentes = bodega.split(" , ");
         String bodegaTel = bodegaComponentes[2];

@@ -9,6 +9,7 @@
     <class>model.Tiendas</class>
     <class>model.Cargos</class>
     <class>model.Bodegas</class>
+    <class>model.Login</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/negocio?zeroDateTimeBehavior=CONVERT_TO_NULL"/>

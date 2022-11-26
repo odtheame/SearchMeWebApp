@@ -4,7 +4,6 @@ import dao.CargosDAO;
 import dao.DepartamentosDAO;
 import dao.EmpleadosDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -37,56 +36,12 @@ public class EmpleadosController extends HttpServlet {
     String idDept;
     String fechaString;
 
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        PrintWriter ou = response.getWriter();
-        ou.print("<!DOCTYPE html>\n"
-                + "<html lang = \"es\">\n"
-                + "<head>\n"
-                + "     <meta charset = \"UTF-8\">\n"
-                + "     <title>SearchMe - Actualizar Empleado</title>"
-                + "     <meta name = \"viewport\" content = \"width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=3.0, minimum-scale=1.0\">\n"
-                + "     <link rel = \"stylesheet\" href = \"https://use.fontawesome.com/releases/v5.6.3/css/all.css\">\n"
-                + "     <link rel = \"stylesheet\" href = \"https://use.fontawesome.com/releases/v5.6.3/css/all.css\">\n"
-                + "     <link rel = \"stylesheet\" href = \"https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css\">\n"
-                + "     <link rel = \"stylesheet\" type=\"text/css\" href = \"/SearchMeWebApp/css/style-index-lvl2.css\">\n"
-                + "     <link rel = \"shortcut icon\" href = \"/SearchMeWebApp/_img/_un-optimized/iconSearchMe.png\">\n"
-                + "</head>\n"
-                + "<body>\n"
-                + "     <header class=\"panel-navegacion\">\n"
-                + "         <img class=\"iconSearchMe\" src=\"/SearchMeWebApp/_img/_un-optimized/iconSearchMe.png\" alt=\"Icono SearchMe\" title=\"SearchMe.\">\n"
-                + "         <button class=\"botonNav\" id=\"inicioBtn\" onclick=\"location.href='index.html'\">Inicio</button>\n"
-                + "         <button class=\"botonNav\" id=\"salirBtn\" onclick=\"location.href='index.html'\">Salir</button>\n"
-                + "     </header>\n"
-                + "     <header class=\"panel-crear-elemento\">\n"
-                + "         <h1>Actualizar Empleado</h1>\n"
-                + "     </header>\n"
-                + "     <div class=\"contenedor-contenido\">\n"
-                + "         <p>Bienvenido al panel de edición de un empleado. Aquí podrá establecer la información respectivamente, por favor ingrese los datos si es el caso y haga clic en actualizar o eliminar.</p>\n"
-                + "         <form class=\"formulario\" action=\"/SearchMeWebApp/EmpleadosController\" method=\"post\">\n"
-                + "             <input type=\"text\" maxlength=\"15\" placeholder=\"Primer Nombre\" name=\"prNombre\" value=\"" + prNombre + "\" autocomplete=\"off\" required>\n"
-                + "             <input type=\"text\" maxlength=\"15\" placeholder=\"Segundo Nombre\" name=\"sdNombre\" autocomplete=\"off\" value=\"" + sdNombre + "\">\n"
-                + "             <input type=\"text\" maxlength=\"15\" placeholder=\"Primer Apellido\" name=\"prApell\" value=\"" + prApell + "\" autocomplete=\"off\" required>\n"
-                + "             <input type=\"text\" maxlength=\"15\" placeholder=\"Segundo Apellido\" name=\"sdApell\" value=\"" + sdApell + "\" autocomplete=\"off\" required>\n"
-                + "             <input type=\"text\" maxlength=\"15\" placeholder=\"Dirección\" name=\"direccion\" value=\"" + direccion + "\" autocomplete=\"off\" required>\n\"\n"
-                + "             <input type=\"text\" maxlength=\"15\" placeholder=\"Teléfono\" name=\"telefono\" value=\"" + telefono + "\" autocomplete=\"off\" required>\n"
-                + "             <input type=\"email\" maxlength=\"40\" placeholder=\"Correo\" name=\"correo\" value=\"" + correo + "\" autocomplete=\"off\" required>\n"
-                + "             <input type=\"date\" min=\"1922-01-01\" max=\"2010-01-01\" name=\"fechaNaci\" value=\"" + fechaString + "\" autocomplete=\"off\" required>\n"
-                + "             <input type=\"text\" maxlength=\"15\" placeholder=\"Ciudad\" name=\"ciudad\" value=\"" + ciudad + "\" autocomplete=\"off\" required>\n"
-                + "             <input type=\"text\" maxlength=\"15\" placeholder=\"País\" name=\"pais\" value=\"" + pais + "\" autocomplete=\"off\" required>\n"
-                + "             <input type=\"number\" max=\"100\" min=\"1\" placeholder=\"ID Cargo\" name=\"idCargo\" value=\"" + idCargo + "\" autocomplete=\"off\" required>\n"
-                + "             <input type=\"number\" max=\"100\" min=\"1\" placeholder=\"ID Departamento\" name=\"idDept\" value=\"" + idDept + "\" autocomplete=\"off\" required>\n"
-                + "             <input type=\"submit\" value=\"Actualizar\" name=\"btnOperacion\">\n"
-                + "             <input type=\"submit\" value=\"Eliminar\" name=\"btnOperacion\">\n"
-                + "         </form>\n"
-                + "     </div>\n"
-                + "<body>\n"
-                + "</html>");
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        request.getRequestDispatcher("edit/editEmpleado.jsp?log=true").forward(request, response);
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        PrintWriter ou = response.getWriter();
         String metodoCRUD = request.getParameter("btnOperacion");
         boolean create = "Crear".equals(metodoCRUD);
         boolean read = "Buscar".equals(metodoCRUD);
@@ -95,15 +50,15 @@ public class EmpleadosController extends HttpServlet {
         if (create) {
             initComponents(request);
             setInfo();
-            if (!dao.cargoExiste(idCargo)) {
-                ou.print("<script>alert(\"El cargo que intenta referenciar no existe\");"
-                        + "location.href=\"index.html\" </script>");
+            if (dao.cargoExiste(idCargo)) {
+                response.sendRedirect("seleccionCrud.jsp?log=true&msg=notFound&table=Cargo");
+            } else if (dao.departamentoExiste(idDept)) {
+                response.sendRedirect("seleccionCrud.jsp?log=true&msg=notFound&table=Departamento");
+            } else {
+                dao.create(empleado);
+                setAttributes(request);
+                request.getRequestDispatcher("/edit/editEmpleado.jsp?log=true&msg=created&table=Empleado").forward(request, response);
             }
-            if (!dao.departamentoExiste(idDept)) {
-                ou.print("<script>alert(\"El departamento que intenta referenciar no existe\");"
-                        + "location.href=\"index.html\" </script>");
-            }
-            dao.create(empleado);
         }
         if (read) {
             int idEmpleado = 0;
@@ -122,33 +77,40 @@ public class EmpleadosController extends HttpServlet {
                 }
             }
             if (idEmpleado == 0) {
-                ou.print("<script>alert(\"Empleado no encontrado\");"
-                        + "location.href=\"index.html\" </script>");
+                response.sendRedirect("seleccionCrud.jsp?log=true&msg=notFound&table=Empleado");
             } else {
                 getInfo(idEmpleado);
+                setAttributes(request);
             }
         }
         if (update) {
             empleado.setIdEmpleado(dao.buscarEmpleadoCorreo(correo));
             initComponents(request);
             setInfo();
-            dao.update(empleado);
-            ou.print("<script>alert(\"Empleado actualizado con éxito\");"
-                    + "location.href=\"index.html\"</script>");
-
+            setAttributes(request);
+            if (dao.cargoExiste(idCargo)) {
+                request.getRequestDispatcher("/edit/editEmpleado.jsp?log=true&msg=notFound&table=Cargo").forward(request, response);
+            } else if (dao.departamentoExiste(idDept)) {
+                request.getRequestDispatcher("/edit/editEmpleado.jsp?log=true&msg=notFound&table=Departamento").forward(request, response);
+            } else {
+                dao.update(empleado);
+                request.getRequestDispatcher("/edit/editEmpleado.jsp?log=true&msg=updated&table=Empleado").forward(request, response);
+            }
         }
         if (delete) {
             dao.remove(dao.buscarEmpleadoCorreo(correo));
-            ou.print("<script>"
-                    + "alert('Empleado eliminado con éxito');"
-                    + "location.href=\"index.html\"</script>");
+            setAttributes(request);
+            response.sendRedirect("/SearchMeWebApp/seleccionCrud.jsp?log=true&msg=deleted&table=Empleado");
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doGet(request, response);
-        processRequest(request, response);
+        try {
+            doGet(request, response);
+            processRequest(request, response);
+        } catch (Exception e) {
+        }
     }
 
     private void initComponents(HttpServletRequest request) {
@@ -164,6 +126,21 @@ public class EmpleadosController extends HttpServlet {
         pais = request.getParameter("pais");
         idCargo = request.getParameter("idCargo");
         idDept = request.getParameter("idDept");
+    }
+
+    private void setAttributes(HttpServletRequest request) {
+        request.setAttribute("prNombre", prNombre);
+        request.setAttribute("sdNombre", sdNombre);
+        request.setAttribute("prApell", prApell);
+        request.setAttribute("sdApell", sdApell);
+        request.setAttribute("correo", correo);
+        request.setAttribute("telefono", telefono);
+        request.setAttribute("direccion", direccion);
+        request.setAttribute("idCargo", idCargo);
+        request.setAttribute("idDept", idDept);
+        request.setAttribute("pais", pais);
+        request.setAttribute("ciudad", ciudad);
+        request.setAttribute("fechaNaci", fechaString);
     }
 
     private void setInfo() {

@@ -1,7 +1,6 @@
 package dao;
 
 import config.ConnecctionDB;
-import java.util.ArrayList;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -30,7 +29,7 @@ public class DepartamentosDAO {
     public static EntityManager getEntityManager() {
         try {
             if (emf == null) {
-                emf = Persistence.createEntityManagerFactory("PRUEBALOLPU");
+                emf = Persistence.createEntityManagerFactory("SearchMeWebAppPU");
                 System.out.println("Conectado.");
             }
         } catch (Exception e) {

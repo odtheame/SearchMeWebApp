@@ -28,7 +28,7 @@ public class EmpleadosDAO {
     public static EntityManager getEntityManager() {
         try {
             if (emf == null) {
-                emf = Persistence.createEntityManagerFactory("PRUEBALOLPU");
+                emf = Persistence.createEntityManagerFactory("SearchMeWebAppPU");
                 System.out.println("Conectado.");
             }
         } catch (Exception e) {

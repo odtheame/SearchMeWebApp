@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import model.Bodegas;
 
 @WebServlet("/BodegasController")
@@ -19,47 +18,12 @@ public class BodegasController extends HttpServlet {
     String direccion;
     String telefono;
 
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        PrintWriter ou = response.getWriter();
-        ou.print("<!DOCTYPE html>\n"
-                + "<html lang = \"es\">\n"
-                + "<head>\n"
-                + "     <meta charset = \"UTF-8\">\n"
-                + "     <title>SearchMe - Actualizar Bodega</title>"
-                + "     <meta name = \"viewport\" content = \"width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=3.0, minimum-scale=1.0\">\n"
-                + "     <link rel = \"stylesheet\" href = \"https://use.fontawesome.com/releases/v5.6.3/css/all.css\">\n"
-                + "     <link rel = \"stylesheet\" href = \"https://use.fontawesome.com/releases/v5.6.3/css/all.css\">\n"
-                + "     <link rel = \"stylesheet\" href = \"https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css\">\n"
-                + "     <link rel = \"stylesheet\" type=\"text/css\" href = \"/SearchMeWebApp/css/style-index-lvl2.css\">\n"
-                + "     <link rel = \"shortcut icon\" href = \"/SearchMeWebApp/_img/_un-optimized/iconSearchMe.png\">\n"
-                + "</head>\n"
-                + "<body>\n"
-                + "     <header class=\"panel-navegacion\">\n"
-                + "         <img class=\"iconSearchMe\" src=\"/SearchMeWebApp/_img/_un-optimized/iconSearchMe.png\" alt=\"Icono SearchMe\" title=\"SearchMe.\">\n"
-                + "         <button class=\"botonNav\" id=\"inicioBtn\" onclick=\"location.href='index.html'\">Inicio</button>\n"
-                + "         <button class=\"botonNav\" id=\"salirBtn\" onclick=\"location.href='index.html'\">Salir</button>\n"
-                + "     </header>\n"
-                + "     <header class=\"panel-crear-elemento\">\n"
-                + "         <h1>Actualizar bodega</h1>\n"
-                + "     </header>\n"
-                + "     <div class=\"contenedor-contenido\">\n"
-                + "         <p>Bienvenido al panel de edición de una bodega. Aquí podrá establecer la información respectivamente, por favor ingrese los datos si es el caso y haga clic en actualizar o eliminar.</p>\n"
-                + "         <form class=\"formulario\" action=\"/SearchMeWebApp/BodegasController\" method=\"post\">\n"
-                + "             <input type=\"text\" maxlength=\"20\" placeholder=\"Nombre\" name=\"nombre\" value=\"" + nombre + "\" autocomplete=\"off\" required>\n"
-                + "             <input type=\"text\" maxlength=\"30\" placeholder=\"Direccion\" name=\"direccion\" value=\"" + direccion + "\" autocomplete=\"off\" required>\n"
-                + "             <input type=\"text\" maxlength=\"15\" placeholder=\"Telefono\" name=\"telefono\" value=\"" + telefono + "\" autocomplete=\"off\" required>\n"
-                + "             <input type=\"submit\" value=\"Actualizar\" name=\"btnOperacion\">\n"
-                + "            <input type=\"submit\" value=\"Eliminar\" name=\"btnOperacion\"\">\n"
-                + "         </form>\n"
-                + "     </div>\n"
-                + "<body>\n"
-                + "</html>");
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        request.getRequestDispatcher("edit/editBodega.jsp?log=true").forward(request, response);
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        PrintWriter ou = response.getWriter();
         String metodoCRUD = request.getParameter("btnOperacion");
         boolean create = "Crear".equals(metodoCRUD);
         boolean read = "Buscar".equals(metodoCRUD);
@@ -69,6 +33,8 @@ public class BodegasController extends HttpServlet {
             initComponents(request);
             setInfo();
             dao.create(bodega);
+            setAttributes(request);
+            request.getRequestDispatcher("/edit/editBodega.jsp?log=true&msg=created&table=Bodega").forward(request, response);
         }
         if (read) {
             int idBodega = 0;
@@ -87,10 +53,10 @@ public class BodegasController extends HttpServlet {
                 }
             }
             if (idBodega == 0) {
-                ou.print("<script>alert(\"Bodega no encontrada\");"
-                        + "location.href=\"index.html\" </script>");
+                response.sendRedirect("seleccionCrud.jsp?log=true&msg=notFound&table=Bodega");
             } else {
                 getInfo(idBodega);
+                setAttributes(request);
             }
         }
         if (update) {
@@ -98,27 +64,35 @@ public class BodegasController extends HttpServlet {
             initComponents(request);
             setInfo();
             dao.update(bodega);
-            ou.print("<script>alert(\"Bodega actualizada con éxito\");"
-                    + "location.href=\"index.html\"</script>");
+            setAttributes(request);
+            request.getRequestDispatcher("/edit/editBodega.jsp?log=true&msg=updated&table=Bodega").forward(request, response);
         }
         if (delete) {
             dao.remove(dao.buscarBodegaNom(nombre));
-            ou.print("<script>"
-                    + "alert('Bodega eliminada con éxito');"
-                    + "location.href=\"index.html\"</script>");
+            setAttributes(request);
+            response.sendRedirect("/SearchMeWebApp/seleccionCrud.jsp?log=true&msg=deleted&table=Bodega");
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doGet(request, response);
-        processRequest(request, response);
+        try {
+            doGet(request, response);
+            processRequest(request, response);
+        } catch (Exception e) {
+        }
     }
 
     private void initComponents(HttpServletRequest request) {
         nombre = request.getParameter("nombre");
         direccion = request.getParameter("direccion");
         telefono = request.getParameter("telefono");
+    }
+
+    private void setAttributes(HttpServletRequest request) {
+        request.setAttribute("nombre", nombre);
+        request.setAttribute("direccion", direccion);
+        request.setAttribute("telefono", telefono);
     }
 
     private void setInfo() {

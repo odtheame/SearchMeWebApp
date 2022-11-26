@@ -4,7 +4,6 @@ import dao.ClientesDAO;
 import dao.RecibosDAO;
 import dao.TiendasDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -30,49 +29,12 @@ public class RecibosController extends HttpServlet {
     String idCliente;
     String fechaString;
 
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        PrintWriter ou = response.getWriter();
-        ou.print("<!DOCTYPE html>\n"
-                + "<html lang = \"es\">\n"
-                + "<head>\n"
-                + "     <meta charset = \"UTF-8\">\n"
-                + "     <title>SearchMe - Actualizar Recibo</title>"
-                + "     <meta name = \"viewport\" content = \"width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=3.0, minimum-scale=1.0\">\n"
-                + "     <link rel = \"stylesheet\" href = \"https://use.fontawesome.com/releases/v5.6.3/css/all.css\">\n"
-                + "     <link rel = \"stylesheet\" href = \"https://use.fontawesome.com/releases/v5.6.3/css/all.css\">\n"
-                + "     <link rel = \"stylesheet\" href = \"https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css\">\n"
-                + "     <link rel = \"stylesheet\" type=\"text/css\" href = \"/SearchMeWebApp/css/style-index-lvl2.css\">\n"
-                + "     <link rel = \"shortcut icon\" href = \"/SearchMeWebApp/_img/_un-optimized/iconSearchMe.png\">\n"
-                + "</head>\n"
-                + "<body>\n"
-                + "     <header class=\"panel-navegacion\">\n"
-                + "         <img class=\"iconSearchMe\" src=\"/SearchMeWebApp/_img/_un-optimized/iconSearchMe.png\" alt=\"Icono SearchMe\" title=\"SearchMe.\">\n"
-                + "         <button class=\"botonNav\" id=\"inicioBtn\" onclick=\"location.href='index.html'\">Inicio</button>\n"
-                + "         <button class=\"botonNav\" id=\"salirBtn\" onclick=\"location.href='index.html'\">Salir</button>\n"
-                + "     </header>\n"
-                + "     <header class=\"panel-crear-elemento\">\n"
-                + "         <h1>Actualizar recibo</h1>\n"
-                + "     </header>\n"
-                + "     <div class=\"contenedor-contenido\">\n"
-                + "         <p>Bienvenido al panel de edición de una recibo. Aquí podrá establecer la información respectivamente, por favor ingrese los datos si es el caso y haga clic en actualizar o eliminar.</p>\n"
-                + "         <form class=\"formulario\" action=\"/SearchMeWebApp/RecibosController\" method=\"post\">\n"
-                + "            <input type=\"text\" maxlength=\"20\" placeholder=\"No. Recibo\" name=\"numRecibo\" value=\"" + numRecibo + "\" autocomplete=\"off\" disabled>\n"
-                + "            <input type=\"date\" min=\"1922-01-01\" max=\"2010-01-01\" name=\"fechaRecibo\" value=\"" + fechaString + "\" autocomplete=\"off\" required>\n"
-                + "            <input type=\"number\" step=\"0.01\" min=\"0\" placeholder=\"Valor Total\" name=\"valorTotal\" value=\"" + valorTotal + "\" autocomplete=\"off\" required>\n"
-                + "            <input type=\"number\" max=\"100\" min=\"1\" placeholder=\"ID Tienda\" name=\"idTienda\" value=\"" + idTienda + "\" autocomplete=\"off\" required>\n"
-                + "            <input type=\"number\" max=\"100\" min=\"1\" placeholder=\"ID Cliente\" name=\"idCliente\" value=\"" + idCliente + "\" autocomplete=\"off\" >\n"
-                + "             <input type=\"submit\" value=\"Actualizar\" name=\"btnOperacion\">\n"
-                + "            <input type=\"submit\" value=\"Eliminar\" name=\"btnOperacion\"\">\n"
-                + "         </form>\n"
-                + "     </div>\n"
-                + "<body>\n"
-                + "</html>");
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        request.getRequestDispatcher("edit/editRecibo.jsp?log=true").forward(request, response);
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        PrintWriter ou = response.getWriter();
         String metodoCRUD = request.getParameter("btnOperacion");
         boolean create = "Crear".equals(metodoCRUD);
         boolean read = "Buscar".equals(metodoCRUD);
@@ -81,15 +43,15 @@ public class RecibosController extends HttpServlet {
         if (create) {
             initComponents(request);
             setInfo();
-            if (!dao.clienteExiste(idCliente)) {
-                ou.print("<script>alert(\"El cliente que intenta referenciar no existe\");"
-                        + "location.href=\"index.html\" </script>");
+            if (dao.clienteExiste(idCliente)) {
+                request.getRequestDispatcher("/edit/editRecibo.jsp?log=true&msg=notFound&table=Cliente").forward(request, response);
+            } else if (dao.tiendaExiste(idTienda)) {
+                request.getRequestDispatcher("/edit/editRecibo.jsp?log=true&msg=notFound&table=Tienda").forward(request, response);
+            } else {
+                dao.create(recibo);
+                setAttributes(request);
+                request.getRequestDispatcher("/edit/editRecibo.jsp?log=true&msg=created&table=Recibo").forward(request, response);
             }
-            if (!dao.tiendaExiste(idTienda)) {
-                ou.print("<script>alert(\"La tienda que intenta referenciar no existe\");"
-                        + "location.href=\"index.html\" </script>");
-            }
-            dao.create(recibo);
         }
         if (read) {
             int idRecibo = 0;
@@ -98,32 +60,41 @@ public class RecibosController extends HttpServlet {
                 idRecibo = dao.buscarReciboNum(numRecibo);
             }
             if (idRecibo == 0) {
-                ou.print("<script>alert(\"Recibo no encontrado\");"
-                        + "location.href=\"index.html\" </script>");
+                response.sendRedirect("seleccionCrud.jsp?log=true&msg=notFound&table=Recibo");
             } else {
                 getInfo(idRecibo);
+                setAttributes(request);
             }
         }
         if (update) {
             recibo.setIdRecibo(dao.buscarReciboNum(numRecibo));
             initComponents(request);
             setInfo();
-            dao.update(recibo);
-            ou.print("<script>alert(\"Recibo actualizado con éxito\");"
-                    + "location.href=\"index.html\"</script>");
+            setAttributes(request);
+            if (dao.tiendaExiste(idTienda)) {
+                request.getRequestDispatcher("/edit/editRecibo.jsp?log=true&msg=notFound&table=Tienda").forward(request, response);
+            } else if (dao.clienteExiste(idCliente)) {
+                request.getRequestDispatcher("/edit/editRecibo.jsp?log=true&msg=notFound&table=Cliente").forward(request, response);
+            } else {
+                dao.update(recibo);
+                request.getRequestDispatcher("/edit/editRecibo.jsp?log=true&msg=updated&table=Recibo").forward(request, response);
+            }
         }
         if (delete) {
             dao.remove(dao.buscarReciboNum(numRecibo));
-            ou.print("<script>"
-                    + "alert('Recibo eliminado con exito');"
-                    + "location.href=\"index.html\"</script>");
+            setAttributes(request);
+            response.sendRedirect("/SearchMeWebApp/seleccionCrud.jsp?log=true&msg=deleted&table=Recibo");
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doGet(request, response);
-        processRequest(request, response);
+        try {
+            doGet(request, response);
+            processRequest(request, response);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
     private void initComponents(HttpServletRequest request) {
@@ -132,6 +103,14 @@ public class RecibosController extends HttpServlet {
         valorTotal = request.getParameter("valorTotal");
         idTienda = request.getParameter("idTienda");
         idCliente = request.getParameter("idCliente");
+    }
+
+    private void setAttributes(HttpServletRequest request) {
+        request.setAttribute("numRecibo", numRecibo);
+        request.setAttribute("fechaRecibo", fechaString);
+        request.setAttribute("valorTotal", valorTotal);
+        request.setAttribute("idTienda", idTienda);
+        request.setAttribute("idCliente", idCliente);
     }
 
     private void setInfo() {

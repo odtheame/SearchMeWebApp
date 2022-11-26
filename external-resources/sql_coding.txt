@@ -1,3 +1,10 @@
+CREATE TABLE Login (
+	idLogin int AUTO_INCREMENT,
+	usuario varchar(15) NOT NULL UNIQUE,
+	clave varchar(32) NOT NULL,
+	PRIMARY KEY (idLogin)
+);
+
 CREATE TABLE Bodegas (
 	idBodega int NOT NULL AUTO_INCREMENT,
 	nom_Bodega varchar(20) NOT NULL,
@@ -84,6 +91,7 @@ CREATE TABLE Recibos (
 	FOREIGN KEY(idCliente) REFERENCES Clientes (idCliente)
 ); 
 
+INSERT INTO login VALUES (1, "admin", md5("admin"));
 
 INSERT INTO clientes VALUES (1, "Jeison", "Stiven", "Almanza", "Benavides", "jsalmanzab@itc.edu.co", "3138544087", "Kr 88c #54-29 sur");
 INSERT INTO clientes VALUES (2, "Johan", "Steven", "Gil", "Cardona", "jsgilc@itc.edu.co", "3137544067", "Kr 31c #78-29 sur");

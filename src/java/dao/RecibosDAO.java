@@ -28,7 +28,7 @@ public class RecibosDAO {
     public static EntityManager getEntityManager() {
         try {
             if (emf == null) {
-                emf = Persistence.createEntityManagerFactory("PRUEBALOLPU");
+                emf = Persistence.createEntityManagerFactory("SearchMeWebAppPU");
                 System.out.println("Conectado.");
             }
         } catch (Exception e) {
@@ -186,12 +186,10 @@ public class RecibosDAO {
     public boolean tiendaExiste(String idTienda) {  //Confirma que la tienda que se va a asociar existe
         TiendasDAO tDao = new TiendasDAO();
         return (tDao.obtenerTienda(Integer.parseInt(idTienda)) == null);
-
     }
 
     public boolean clienteExiste(String idCliente) {    //Confirma que el cliente que se va a asociar existe
         ClientesDAO cDao = new ClientesDAO();
         return (cDao.obtenerCliente(Integer.parseInt(idCliente)) == null);
-
     }
 }

@@ -3,7 +3,6 @@ package controller;
 import dao.BodegasDAO;
 import dao.TiendasDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -22,48 +21,12 @@ public class TiendasController extends HttpServlet {
     String telefono;
     String idBodega;
 
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        PrintWriter ou = response.getWriter();
-        ou.print("<!DOCTYPE html>\n"
-                + "<html lang = \"es\">\n"
-                + "<head>\n"
-                + "     <meta charset = \"UTF-8\">\n"
-                + "     <title>SearchMe - Actualizar Tienda</title>"
-                + "     <meta name = \"viewport\" content = \"width=device-width, user-scalable=yes, initial-scale=1.0, maximum-scale=3.0, minimum-scale=1.0\">\n"
-                + "     <link rel = \"stylesheet\" href = \"https://use.fontawesome.com/releases/v5.6.3/css/all.css\">\n"
-                + "     <link rel = \"stylesheet\" href = \"https://use.fontawesome.com/releases/v5.6.3/css/all.css\">\n"
-                + "     <link rel = \"stylesheet\" href = \"https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css\">\n"
-                + "     <link rel = \"stylesheet\" type=\"text/css\" href = \"/SearchMeWebApp/css/style-index-lvl2.css\">\n"
-                + "     <link rel = \"shortcut icon\" href = \"/SearchMeWebApp/_img/_un-optimized/iconSearchMe.png\">\n"
-                + "</head>\n"
-                + "<body>\n"
-                + "     <header class=\"panel-navegacion\">\n"
-                + "         <img class=\"iconSearchMe\" src=\"/SearchMeWebApp/_img/_un-optimized/iconSearchMe.png\" alt=\"Icono SearchMe\" title=\"SearchMe.\">\n"
-                + "         <button class=\"botonNav\" id=\"inicioBtn\" onclick=\"location.href='index.html'\">Inicio</button>\n"
-                + "         <button class=\"botonNav\" id=\"salirBtn\" onclick=\"location.href='index.html'\">Salir</button>\n"
-                + "     </header>\n"
-                + "     <header class=\"panel-crear-elemento\">\n"
-                + "         <h1>Actualizar tienda</h1>\n"
-                + "     </header>\n"
-                + "     <div class=\"contenedor-contenido\">\n"
-                + "         <p>Bienvenido al panel de edición de una tienda. Aquí podrá establecer la información respectivamente, por favor ingrese los datos si es el caso y haga clic en actualizar o eliminar.</p>\n"
-                + "         <form class=\"formulario\" action=\"/SearchMeWebApp/TiendasController\" method=\"post\">\n"
-                + "             <input type=\"text\" maxlength=\"20\" placeholder=\"Nombre\" name=\"nombre\" value=\"" + nombre + "\" autocomplete=\"off\" required>\n"
-                + "             <input type=\"text\" maxlength=\"40\" placeholder=\"Dirección\" name=\"direccion\" value=\"" + direccion + "\" autocomplete=\"off\" required>\n"
-                + "             <input type=\"text\" maxlength=\"15\" placeholder=\"Telefono\" name=\"telefono\" value=\"" + telefono + "\" autocomplete=\"off\" required>\n"
-                + "             <input type=\"number\" max=\"100\" min=\"1\" placeholder=\"ID Bodega\" name=\"idBodega\" value=\"" + idBodega + "\" autocomplete=\"off\" required>\n"
-                + "             <input type=\"submit\" value=\"Actualizar\" name=\"btnOperacion\">\n"
-                + "             <input type=\"submit\" value=\"Eliminar\" name=\"btnOperacion\"\">\n"
-                + "         </form>\n"
-                + "     </div>\n"
-                + "<body>\n"
-                + "</html>");
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        request.getRequestDispatcher("edit/editTienda.jsp?log=true").forward(request, response);
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        PrintWriter ou = response.getWriter();
         String metodoCRUD = request.getParameter("btnOperacion");
         boolean create = "Crear".equals(metodoCRUD);
         boolean read = "Buscar".equals(metodoCRUD);
@@ -72,11 +35,13 @@ public class TiendasController extends HttpServlet {
         if (create) {
             initComponents(request);
             setInfo();
-            if (!dao.bodegaExiste(idBodega)) {
-                ou.print("<script>alert(\"La bodega que intenta referenciar no existe\");"
-                        + "location.href=\"index.html\" </script>");
+            if (dao.bodegaExiste(idBodega)) {
+                response.sendRedirect("seleccionCrud.jsp?log=true&msg=notFound&table=Bodega");
+            } else {
+                dao.create(tienda);
+                setAttributes(request);
+                request.getRequestDispatcher("/edit/editTienda.jsp?log=true&msg=created&table=Tienda").forward(request, response);
             }
-            dao.create(tienda);
         }
         if (read) {
             int idTienda = 0;
@@ -95,32 +60,39 @@ public class TiendasController extends HttpServlet {
                 }
             }
             if (idTienda == 0) {
-                ou.print("<script>alert(\"Tienda no encontrada\");"
-                        + "location.href=\"index.html\" </script>");
+                response.sendRedirect("seleccionCrud.jsp?log=true&msg=notFound&table=Tienda");
             } else {
                 getInfo(idTienda);
+                setAttributes(request);
             }
         }
         if (update) {
             tienda.setIdTienda(dao.buscarTiendaNom(nombre));
             initComponents(request);
             setInfo();
-            dao.update(tienda);
-            ou.print("<script>alert(\"Tienda actualizada con éxito\");"
-                    + "location.href=\"index.html\"</script>");
+            setAttributes(request);
+            if (dao.bodegaExiste(idBodega)) {
+                request.getRequestDispatcher("/edit/editTienda.jsp?log=true&msg=notFound&table=Bodega").forward(request, response);
+            } else {
+                dao.update(tienda);
+                request.getRequestDispatcher("/edit/editTienda.jsp?log=true&msg=updated&table=Tienda").forward(request, response);
+            }
         }
         if (delete) {
             dao.remove(dao.buscarTiendaNom(nombre));
-            ou.print("<script>"
-                    + "alert('Tienda eliminada con exito');"
-                    + "location.href=\"index.html\"</script>");
+            setAttributes(request);
+            response.sendRedirect("/SearchMeWebApp/seleccionCrud.jsp?log=true&msg=deleted&table=Tienda");
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doGet(request, response);
-        processRequest(request, response);
+        try {
+            doGet(request, response);
+            processRequest(request, response);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
     private void initComponents(HttpServletRequest request) {
@@ -128,6 +100,13 @@ public class TiendasController extends HttpServlet {
         direccion = request.getParameter("direccion");
         telefono = request.getParameter("telefono");
         idBodega = request.getParameter("idBodega");
+    }
+
+    private void setAttributes(HttpServletRequest request) {
+        request.setAttribute("nombre", nombre);
+        request.setAttribute("direccion", direccion);
+        request.setAttribute("telefono", telefono);
+        request.setAttribute("idBodega", idBodega);
     }
 
     private void setInfo() {
